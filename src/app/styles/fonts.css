@@ -1,0 +1,18 @@
+@font-face {
+  font-family: "Actay";
+  src: url("/fonts/Actay-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: "ActayWide";
+  src: url("/fonts/ActayWide-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Grotest";
+  src: url("/fonts/SharpGrotesk-Black15.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+}

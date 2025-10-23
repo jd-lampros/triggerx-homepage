@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://www.triggerx.network/
+
+# Sitemaps
+Sitemap: https://www.triggerx.network/sitemap.xml
