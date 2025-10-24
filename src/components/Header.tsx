@@ -36,27 +36,17 @@ const Header = () => {
   // Navigation items for the menu
   const navItems: NavItem[] = [
     {
-      id: "Dev Hub",
-      path: "https://app.triggerx.network/devhub",
-      label: "Dev Hub",
-      target: "_blank",
-      external: true,
-    },
-    {
       id: "Leaderboard",
       path: "https://app.triggerx.network/leaderboard",
       label: "Leaderboard",
       target: "_blank",
       external: true,
+    }, {
+      id: "Get Started",
+      label: "Get Started",
+      dropdown: true,
     },
     { id: "Blog", path: "/blog", label: "Blog" },
-    {
-      id: "Join as Keeper",
-      path: "https://triggerx.gitbook.io/triggerx-docs/getting-started-as-keepers",
-      label: "Join as Keeper",
-      target: "_blank",
-      external: true,
-    },
     {
       id: "Contact Us",
       label: "Contact Us",
@@ -214,13 +204,14 @@ const Header = () => {
 
   return (
     <>
+      {/* Desktop Header */}
       <div
         className={`fixed top-0 left-0 w-full z-[9999] bg-transparent ${isMobile ? "hidden" : "block"}`}
       >
-        <div className="w-full h-[100px] flex justify-center items-center">
-          <div className="w-[90%] mx-auto bg-transparent">
+        <div className="w-full h-[150px] flex justify-center items-center">
+          <div className="w-[90%] mx-auto bg-transparent ">
             <div className="w-full flex items-center justify-between header z-100">
-              {/* Logo on the left */}
+              {/* Logo */}
               <div className="flex-shrink-0 w-60">
                 <div
                   onClick={handleLogoClick}
@@ -237,19 +228,19 @@ const Header = () => {
                 </div>
               </div>
 
-              {/* Navigation in the center */}
+              {/* Navigation*/}
               <nav
                 ref={navRef}
-                className="relative bg-[#181818F0] backdrop-blur-[20px] rounded-xl z-10 disable-grid-effect"
+                className="relative bg-[#181818F0] backdrop-blur-[20px] rounded-2xl z-10 disable-grid-effect"
                 onMouseLeave={handleMouseLeave}
               >
                 <div
-                  className="absolute rounded-xl"
+                  className="absolute rounded-2xl opacity-0"
                   style={highlightStyle}
                 >
-                  <div className="w-full h-full rounded-xl p-[0.5px] bg-gradient-to-b from-[#ffffff] to-[#4B4A4A]">
-                    <div className="w-full h-full rounded-xl bg-[#181818F0] flex items-center justify-center">
-                      <div className="w-full h-full rounded-xl bg-[linear-gradient(180deg,rgba(217,217,217,0.12)_0%,rgba(20,19,19,0.12)_100%)] flex items-center justify-center">
+                  <div className="w-full h-full rounded-2xl p-[0.5px] bg-gradient-to-b from-[#ffffff] to-[#4B4A4A]">
+                    <div className="w-full h-full rounded-2xl bg-[#181818F0] flex items-center justify-center">
+                      <div className="w-full h-full rounded-2xl bg-[linear-gradient(180deg,rgba(217,217,217,0.12)_0%,rgba(20,19,19,0.12)_100%)] flex items-center justify-center">
 
                       </div>
                     </div>
@@ -262,8 +253,8 @@ const Header = () => {
                         <button
                           onClick={() => toggleDropdown(item)}
                           onMouseEnter={handleMouseEnter}
-                          className={`text-nowrap font-actayRegular text-center text-sm xl:text-base px-4 xl:px-6 py-3 rounded-xl text-white relative z-10 cursor-pointer flex items-center gap-1 ${item.path && isActiveRoute(item.path)
-                            ? "bg-gradient-to-r from-[#D9D9D924] to-[#14131324] rounded-xl border border-[#4B4A4A]"
+                          className={`text-nowrap font-actayRegular text-center text-sm xl:text-base px-4 xl:px-6 py-4 rounded-2xl text-white relative z-10 cursor-pointer flex items-center gap-1 ${item.path && isActiveRoute(item.path)
+                            ? "bg-gradient-to-r from-[#D9D9D924] to-[#14131324] rounded-2xl border border-[#4B4A4A]"
                             : "transparent"
                             }`}
                         >
@@ -289,7 +280,7 @@ const Header = () => {
                           target="_blank"
                           rel="noopener noreferrer"
                           onMouseEnter={handleMouseEnter}
-                          className="text-nowrap font-actayRegular text-center text-sm xl:text-base px-4 xl:px-6 py-3 rounded-xl text-white relative z-10 cursor-pointer flex items-center gap-1"
+                          className="text-nowrap font-actayRegular text-center text-sm xl:text-base px-4 xl:px-6 py-4 rounded-2xl text-white relative z-10 cursor-pointer flex items-center gap-1"
                         >
                           {item.label}
                         </Link>
@@ -297,7 +288,7 @@ const Header = () => {
                         <button
                           onClick={handleClick}
                           onMouseEnter={handleMouseEnter}
-                          className="text-nowrap font-actayRegular text-center text-sm xl:text-base px-4 xl:px-6 py-3 rounded-xl text-white relative z-10 cursor-pointer flex items-center gap-1"
+                          className="text-nowrap font-actayRegular text-center text-sm xl:text-base px-4 xl:px-6 py-4 rounded-2xl text-white relative z-10 cursor-pointer flex items-center gap-1"
                         >
                           {item.label}
                         </button>
@@ -312,10 +303,44 @@ const Header = () => {
                               item.dropdown ?? false
                             )
                           }
-                          className="text-nowrap font-actayRegular text-center text-sm xl:text-base px-4 xl:px-6 py-3 rounded-xl text-white relative z-10 cursor-pointer flex items-center gap-1"
+                          className="text-nowrap font-actayRegular text-center text-sm xl:text-base px-4 xl:px-6 py-4 rounded-2xl text-white relative z-10 cursor-pointer flex items-center gap-1"
                         >
                           {item.label}
                         </Link>
+                      )}
+                      {/* Desktop Dropdown Menu */}
+                      {item.dropdown && dropdownOpen && item.id === "Get Started" && (
+                        <div
+                          ref={dropdownRef}
+                          className="absolute top-full left-0 mt-2 bg-[#181818F0] backdrop-blur-[20px] rounded-2xl shadow-lg border border-[#4b4a4a] z-20 min-w-[200px]"
+                        >
+                          <div className="py-2">
+                            <a
+                              href="https://app.triggerx.network/devhub"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="font-actayRegular block px-4 py-3 text-white hover:bg-[#282828] rounded-2xl text-sm mx-2"
+                            >
+                              Dev Hub
+                            </a>
+                            <a
+                              href="https://app.triggerx.network/"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="font-actayRegular block px-4 py-3 text-white hover:bg-[#282828] rounded-2xl text-sm mx-2"
+                            >
+                              Build
+                            </a>
+                            <a
+                              href="https://triggerx.gitbook.io/triggerx-docs/getting-started-as-keepers"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="font-actayRegular block px-4 py-3 text-white hover:bg-[#282828] rounded-2xl text-sm mx-2"
+                            >
+                              Join as Keeper
+                            </a>
+                          </div>
+                        </div>
                       )}
                     </div>
                   ))}
@@ -343,6 +368,8 @@ const Header = () => {
 
         </div>
       </div>
+
+      {/* Mobile Header */}
       <div
         className={`relative h-screen w-full ${isMobile ? "block" : "hidden"} bg-[#0a0a0a]`}
       >
@@ -368,7 +395,7 @@ const Header = () => {
                     <div className="absolute top-full right-0 mt-3 bg-[#181818] p-4 rounded-md shadow-lg z-10 md:w-[20rem] w-60 lg:hidden">
                       <nav ref={navRef} className="relative">
                         <div
-                          className="absolute bg-gradient-to-r from-[#D9D9D924] to-[#14131324] rounded-xl border border-[#4B4A4A] opacity-0"
+                          className="absolute bg-gradient-to-r from-[#D9D9D924] to-[#14131324] rounded-2xl border border-[#4B4A4A] opacity-0"
                           style={highlightStyle}
                         />
 
@@ -388,7 +415,7 @@ const Header = () => {
                                       item.dropdown ?? false
                                     );
                                   }}
-                                  className={`font-actayRegular text-sm sm:text-sm px-7 py-3 rounded-xl relative z-10 cursor-pointer flex items-center gap-1 hover:bg-[#282828] w-full ${item.path && isActiveRoute(item.path)
+                                  className={`font-actayRegular text-sm sm:text-sm px-7 py-3 rounded-2xl relative z-10 cursor-pointer flex items-center gap-1 hover:bg-[#282828] w-full ${item.path && isActiveRoute(item.path)
                                     ? "text-white"
                                     : "text-gray-400"
                                     }`}
@@ -419,7 +446,7 @@ const Header = () => {
                                   onClick={() => setMenuOpen(false)}
                                   className="font-actayRegular text-sm
                                    sm:text-sm
-                      px-7 py-3 rounded-xl
+                      px-7 py-3 rounded-2xl
                           relative z-10 cursor-pointer flex items-center gap-1 hover:bg-[#282828] w-full"
                                 >
                                   {item.label}
@@ -430,7 +457,7 @@ const Header = () => {
                                     handleClick();
                                     setMenuOpen(false);
                                   }}
-                                  className={`text-nowrap font-actayRegular text-center text-sm xl:text-base   px-7 py-3 rounded-xl text-white relative z-10 cursor-pointer flex items-center gap-1 ${item.path && isActiveRoute(item.path)
+                                  className={`text-nowrap font-actayRegular text-center text-sm xl:text-base   px-7 py-3 rounded-2xl text-white relative z-10 cursor-pointer flex items-center gap-1 ${item.path && isActiveRoute(item.path)
                                     ? "text-white"
                                     : "text-gray-400"
                                     }`}
@@ -444,7 +471,7 @@ const Header = () => {
                                   onClick={() => {
                                     setMenuOpen(false);
                                   }}
-                                  className={`text-nowrap font-actayRegular text-center text-sm xl:text-base px-7 py-3 rounded-xl text-white relative z-10 cursor-pointer flex items-center gap-1 ${item.path && isActiveRoute(item.path)
+                                  className={`text-nowrap font-actayRegular text-center text-sm xl:text-base px-7 py-3 rounded-2xl text-white relative z-10 cursor-pointer flex items-center gap-1 ${item.path && isActiveRoute(item.path)
                                     ? "text-white"
                                     : "text-gray-400"
                                     }`}
@@ -452,12 +479,21 @@ const Header = () => {
                                   {item.label}
                                 </Link>
                               )}
-                              {item.dropdown && dropdownOpen && (
+                              {item.dropdown && dropdownOpen && item.id === "Get Started" && (
                                 <div
                                   ref={dropdownRef}
-                                  className="bg-[#202020] mt-2 text-xs sm:text-sm rounded-md shadow-lg border border-[#4b4a4a]"
+                                  className="bg-[#181818F0] mt-2 text-xs sm:text-sm rounded-2xl shadow-lg border border-[#4b4a4a]"
                                 >
                                   <div className="py-2 px-4 flex flex-col">
+                                    <a
+                                      href="https://app.triggerx.network/devhub"
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      onClick={() => setMenuOpen(false)}
+                                      className="font-actayRegular block px-4 py-2 text-white hover:bg-[#282828] rounded-[8px] text-sm"
+                                    >
+                                      Dev Hub
+                                    </a>
                                     <a
                                       href="https://app.triggerx.network/"
                                       target="_blank"
@@ -467,13 +503,13 @@ const Header = () => {
                                       Build
                                     </a>
                                     <a
-                                      href="https://triggerx.gitbook.io/triggerx-docs/join-as-keeper"
+                                      href="https://triggerx.gitbook.io/triggerx-docs/getting-started-as-keepers"
                                       target="_blank"
                                       rel="noopener noreferrer"
                                       onClick={() => setMenuOpen(false)}
                                       className="text-sm font-actayRegular block px-4 py-2 text-white hover:bg-[#282828] rounded-[8px]"
                                     >
-                                      Join As Keeper
+                                      Join as Keeper
                                     </a>
                                   </div>
                                 </div>

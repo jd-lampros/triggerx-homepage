@@ -9,6 +9,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger, ScrollSmoother } from "gsap/all";
 import GridBackground from "@/components/GridBackground";
+import Preloader from "@/components/Preloader";
 
 const actayRegular = localFont({
   src: [
@@ -74,6 +75,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <GoogleTagManager gtmId="GTM-T9XQH8N8" />
       <body suppressHydrationWarning>
+        <Preloader />
         <GridBackground />
         <div id="smooth-wrapper">
           <div id="smooth-content">
