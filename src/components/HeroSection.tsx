@@ -224,7 +224,7 @@ function HeroSection() {
       <div className="relative z-0 mx-auto">
         <div className="relative z-10">
           {/* Hero Section */}
-          <section className={`pt-40 mb-20 min-h-screen mx-auto flex flex-col justify-center items-center ${!animationCompleted ? "opacity-0" : ""}`}>
+          <section className={`pt-10 lg:pt-40 mb-20 min-h-screen mx-auto flex flex-col justify-center items-center ${!animationCompleted ? "opacity-0" : ""}`}>
             <div
               ref={titleRef}
               className="font-sharpGrotesk w-[90%] mx-auto  text-center text-4xl sm:text-4xl md:text-6xl xl:text-[5vw] 2xl:text-[5vw]"

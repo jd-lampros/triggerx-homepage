@@ -128,19 +128,6 @@ const Header = () => {
     router.push("/");
   };
 
-
-
-
-
-  // useEffect: Animates dropdown menu when opened
-  useEffect(() => {
-    if (dropdownOpen && dropdownRef.current) {
-      // Dropdown will be animated with CSS transitions
-      // No GSAP needed - CSS handles the animation
-    }
-  }, [dropdownOpen]); // Runs when dropdownOpen changes
-
-
   // useEffect: Closes dropdown menu when clicking outside
   useEffect(() => {
     // Function to handle click outside dropdown
@@ -164,26 +151,26 @@ const Header = () => {
     };
   }, [dropdownOpen]); // Runs when dropdownOpen changes
 
-  // useEffect: Scrolls to contact section after navigation
-  useEffect(() => {
-    if (scrollToSection && pathname === "/") {
-      setTimeout(() => {
-        const section = document.getElementById("contact-section"); // Find contact section
-        if (section) {
-          section.scrollIntoView({ behavior: "smooth" }); // Scroll to it
-        }
-        setScrollToSection(false); // Reset flag
-      }, 100); // Wait 100ms for DOM update
-      setScrollToSection(false); // Reset flag
-    }
-  }, [pathname, scrollToSection]); // Runs when path or scrollToSection changes
-
   // useEffect: Always scroll to top on mount
   useEffect(() => {
     if (typeof window !== "undefined") {
       window.scrollTo(0, 0); // Scroll to top
     }
   }, []); // Runs once on mount
+
+  // useEffect: Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.classList.add('mobile-menu-open');
+    } else {
+      document.body.classList.remove('mobile-menu-open');
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.classList.remove('mobile-menu-open');
+    };
+  }, [menuOpen]);
 
 
 
@@ -435,40 +422,58 @@ const Header = () => {
 
       {/* Mobile Header */}
       <div
-        className={`relative h-screen w-full ${isMobile ? "block" : "hidden"} bg-[#0a0a0a]`}
+        className={`relative h-auto w-full z-50 ${isMobile ? "block" : "hidden"} bg-transparent`}
       >
         <div
-          className="fixed top-0 left-0 right-0 w-full h-[100px]"
+          className="absolute top-0 left-0 right-0 w-full z-50"
         >
-          <div className="w-full bg-[#0a0a0a]">
-            <div className="w-[100%] sm:px-10 px-5 flex justify-end gap-3 items-center py-10 header lg:hidden">
-              <div className="relative  items-center gap-5 ">
-                <div className="flex-shrink-0 relative z-10 text-sm sm:hidden hidden md:flex"></div>
+          <div className="w-full">
+            <div className="w-[100%] sm:px-10 px-5 flex justify-between gap-3 items-center py-10 header lg:hidden">
+              <div className="relative z-10">
+                <div className="w-full relative">
+                  <Image
+                    src={logo}
+                    alt="TriggerX Logo"
+                    className="w-full"
+                  />
+                </div>
               </div>
               <div
                 className="flex-shrink-0 relative z-10 "
               >
                 <div className="lg:hidden">
-                  <h4
-                    onClick={() => setMenuOpen(!menuOpen)}
-                    className="text-white text-xl lg:text-2xl cursor-pointer"
-                  >
-                    {menuOpen ? "✖" : "☰"}
-                  </h4>
+                  <div className="menu">
+                    <svg
+                      className={`ham hamRotate ham1 ${menuOpen ? 'active' : ''}`}
+                      viewBox="0 0 100 100"
+                      width="40"
+                      onClick={() => setMenuOpen(!menuOpen)}
+                    >
+                      <path className="line top" d="m 30,33 h 40 c 0,0 9.044436,-0.654587 9.044436,-8.508902 0,-7.854315 -8.024349,-11.958003 -14.89975,-10.85914 -6.875401,1.098863 -13.637059,4.171617 -13.637059,16.368042 v 40" />
+                      <path className="line middle" d="m 30,50 h 40" />
+                      <path className="line bottom" d="m 30,67 h 40 c 12.796276,0 15.357889,-11.717785 15.357889,-26.851538 0,-15.133752 -4.786586,-27.274118 -16.667516,-27.274118 -11.88093,0 -18.499247,6.994427 -18.435284,17.125656 l 0.252538,40" />
+                    </svg>
+                  </div>
                   {menuOpen && (
-                    <div className="absolute top-full right-0 mt-3 bg-[#181818] p-4 rounded-md shadow-lg z-10 md:w-[20rem] w-60 lg:hidden">
-                      <nav ref={navRef} className="relative">
+                    <div
+                      className="fixed top-[120px] left-0 right-0 bottom-0 w-full bg-[#0a0a0a] z-[9999] flex items-center justify-center lg:hidden"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      <nav
+                        ref={navRef}
+                        className="absolute top-0 left-0 w-full max-w-md mx-auto px-6"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <div
                           className="absolute bg-gradient-to-r from-[#D9D9D924] to-[#14131324] rounded-2xl border border-[#4B4A4A] opacity-0"
                           style={highlightStyle}
                         />
-
-                        <div className="flex flex-col gap-4">
+                        <div className="flex flex-col gap-6 items-center">
                           {navItems.map((item) => (
                             <div
                               ref={dropdownRef}
                               key={item.id}
-                              className="relative "
+                              className="relative w-full"
                             >
                               {item.dropdown ? (
                                 <button
@@ -479,7 +484,7 @@ const Header = () => {
                                       item.dropdown ?? false
                                     );
                                   }}
-                                  className={`font-actayRegular text-sm sm:text-sm px-7 py-3 rounded-2xl relative z-10 cursor-pointer flex items-center gap-1 hover:bg-[#282828] w-full ${item.path && isActiveRoute(item.path)
+                                  className={`font-actayRegular text-lg px-8 py-4 rounded-2xl relative z-10 cursor-pointer flex items-center justify-center gap-2 hover:bg-[#282828] w-full ${item.path && isActiveRoute(item.path)
                                     ? "text-white"
                                     : "text-gray-400"
                                     }`}
@@ -492,7 +497,7 @@ const Header = () => {
                                     viewBox="0 0 24 24"
                                     strokeWidth="1.5"
                                     stroke="currentColor"
-                                    className={`w-3 h-3 sm:w-4 sm:h-4 transition-transform duration-300 ${dropdownOpen ? "rotate-180" : "rotate-0"
+                                    className={`w-4 h-4 transition-transform duration-300 ${dropdownOpen ? "rotate-180" : "rotate-0"
                                       }`}
                                   >
                                     <path
@@ -508,10 +513,7 @@ const Header = () => {
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   onClick={() => setMenuOpen(false)}
-                                  className="font-actayRegular text-sm
-                                   sm:text-sm
-                      px-7 py-3 rounded-2xl
-                          relative z-10 cursor-pointer flex items-center gap-1 hover:bg-[#282828] w-full"
+                                  className="font-actayRegular text-lg px-8 py-4 rounded-2xl relative z-10 cursor-pointer flex items-center justify-center gap-2 hover:bg-[#282828] w-full"
                                 >
                                   {item.label}
                                 </a>
@@ -521,7 +523,7 @@ const Header = () => {
                                     handleClick();
                                     setMenuOpen(false);
                                   }}
-                                  className={`text-nowrap font-actayRegular text-center text-sm xl:text-base   px-7 py-3 rounded-2xl text-white relative z-10 cursor-pointer flex items-center gap-1 ${item.path && isActiveRoute(item.path)
+                                  className={`text-nowrap font-actayRegular text-center text-lg px-8 py-4 rounded-2xl text-white relative z-10 cursor-pointer flex items-center justify-center gap-2 w-full ${item.path && isActiveRoute(item.path)
                                     ? "text-white"
                                     : "text-gray-400"
                                     }`}
@@ -535,7 +537,7 @@ const Header = () => {
                                   onClick={() => {
                                     setMenuOpen(false);
                                   }}
-                                  className={`text-nowrap font-actayRegular text-center text-sm xl:text-base px-7 py-3 rounded-2xl text-white relative z-10 cursor-pointer flex items-center gap-1 ${item.path && isActiveRoute(item.path)
+                                  className={`text-nowrap font-actayRegular text-center text-lg px-8 py-4 rounded-2xl text-white relative z-10 cursor-pointer flex items-center justify-center gap-2 ${item.path && isActiveRoute(item.path)
                                     ? "text-white"
                                     : "text-gray-400"
                                     }`}
@@ -546,15 +548,15 @@ const Header = () => {
                               {item.dropdown && dropdownOpen && item.id === "Get Started" && (
                                 <div
                                   ref={dropdownRef}
-                                  className="bg-[#181818F0] mt-2 text-xs sm:text-sm rounded-2xl shadow-lg border border-[#4b4a4a]"
+                                  className="bg-[#181818F0] mt-4 text-sm rounded-2xl shadow-lg border border-[#4b4a4a] w-full"
                                 >
-                                  <div className="py-2 px-4 flex flex-col">
+                                  <div className="py-4 px-6 flex flex-col gap-2">
                                     <a
                                       href="https://app.triggerx.network/devhub"
                                       target="_blank"
                                       rel="noopener noreferrer"
                                       onClick={() => setMenuOpen(false)}
-                                      className="font-actayRegular block px-4 py-2 text-white hover:bg-[#282828] rounded-[8px] text-sm"
+                                      className="font-actayRegular block px-4 py-3 text-white hover:bg-[#282828] rounded-[8px] text-center"
                                     >
                                       Dev Hub
                                     </a>
@@ -562,7 +564,7 @@ const Header = () => {
                                       href="https://app.triggerx.network/"
                                       target="_blank"
                                       onClick={() => setMenuOpen(false)}
-                                      className="font-actayRegular block px-4 py-2 text-white hover:bg-[#282828] rounded-[8px] text-sm"
+                                      className="font-actayRegular block px-4 py-3 text-white hover:bg-[#282828] rounded-[8px] text-center"
                                     >
                                       Build
                                     </a>
@@ -571,7 +573,7 @@ const Header = () => {
                                       target="_blank"
                                       rel="noopener noreferrer"
                                       onClick={() => setMenuOpen(false)}
-                                      className="text-sm font-actayRegular block px-4 py-2 text-white hover:bg-[#282828] rounded-[8px]"
+                                      className="font-actayRegular block px-4 py-3 text-white hover:bg-[#282828] rounded-[8px] text-center"
                                     >
                                       Join as Keeper
                                     </a>
@@ -581,15 +583,15 @@ const Header = () => {
                             </div>
                           ))}
                         </div>
-                        <div className=" px-5 py-3">
+                        <div className="mt-8 px-4">
                           <Link
                             href="https://app.triggerx.network/"
                             target="_blank"
                           >
-                            <button className="relative bg-[#222222] text-[#000000] border border-[#222222] px-6 py-2 sm:px-8 sm:py-3 rounded-full group transition-transform w-full">
+                            <button className="relative bg-[#222222] text-[#000000] border border-[#222222] px-8 py-4 rounded-full group transition-transform w-full">
                               <span className="absolute inset-0 bg-[#222222] border border-[#FFFFFF80]/50 rounded-full scale-100 translate-y-0 transition-all duration-300 ease-out group-hover:translate-y-2"></span>
                               <span className="absolute inset-0 bg-[#F8FF7C] rounded-full scale-100 translate-y-0 group-hover:translate-y-0"></span>
-                              <span className="font-actayRegular relative z-10 px-0 py-3 sm:px-3 md:px-6 lg:px-2 rounded-full translate-y-2 group-hover:translate-y-0 transition-all duration-300 ease-out text-xs sm:text-base">
+                              <span className="font-actayRegular relative z-10 px-4 py-2 rounded-full translate-y-2 group-hover:translate-y-0 transition-all duration-300 ease-out text-base">
                                 Start Building
                               </span>
                             </button>
@@ -603,16 +605,7 @@ const Header = () => {
             </div>
           </div>
 
-          <div className="w-[100%] px-20 flex sm:my-[100px]  md:my-[100px] lg:my-[100px] my-[100px]  items-center flex-col relative">
-            <div className="w-full relative">
-              <Image
-                src={logo}
-                alt="TriggerX Logo"
-                className="w-full "
-              />
-            </div>
 
-          </div>
         </div>
       </div>
     </>

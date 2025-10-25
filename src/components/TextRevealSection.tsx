@@ -103,7 +103,7 @@ const TextRevealSection = () => {
       <div className="w-full">
         <div
           ref={textWrapperRef}
-          className="wrapper space-y-12 text-3xl sm:text-4xl md:text-[8vw] lg:text-[8vw] xl:text-[8vw] 2xl:text-[8vw]"
+          className="wrapper space-y-12 text-[12vw] sm:text-4xl md:text-[8vw] lg:text-[8vw] xl:text-[8vw] 2xl:text-[8vw]"
         >
           <p className="text-[#3b3b3b] font-actayWide leading-[110%]">
             <span className="text-[#ffffff]">Blockchain</span> moves{" "}
@@ -136,7 +136,7 @@ const TextRevealSection = () => {
             viewBox="0 0 230 27"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            className="inline-block w-auto ml-4 h-[8vw]"
+            className="inline-block w-auto ml-4 md:h-[8vw] h-[10vw]"
           >
             <g clipPath="url(#clip0_7_598)">
               <path
