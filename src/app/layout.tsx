@@ -10,6 +10,7 @@ import gsap from "gsap";
 import { ScrollTrigger, ScrollSmoother } from "gsap/all";
 import GridBackground from "@/components/GridBackground";
 import Preloader from "@/components/Preloader";
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const sharpGrotesk300Light25 = localFont({
   src: "../../public/fonts/SharpGrotesk-Light25.otf",
@@ -80,6 +81,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </HeaderFooterWrapper>
           </div>
         </div>
+        <SpeedInsights />
       </body>
     </html>
   );
