@@ -222,9 +222,9 @@ function HeroSection() {
   return (
     <>
       <div className="relative z-0 mx-auto">
-        <div className="relative -z-10">
+        <div className="relative z-10">
           {/* Hero Section */}
-          <section className={`pt-20 mb-20 border min-h-screen mx-auto flex flex-col justify-center items-center ${!animationCompleted ? "opacity-0" : ""}`}>
+          <section className={`pt-40 mb-20 min-h-screen mx-auto flex flex-col justify-center items-center ${!animationCompleted ? "opacity-0" : ""}`}>
             <div
               ref={titleRef}
               className="font-sharpGrotesk w-[90%] mx-auto  text-center text-4xl sm:text-4xl md:text-6xl xl:text-[5vw] 2xl:text-[5vw]"
@@ -232,19 +232,19 @@ function HeroSection() {
             >
               <h1
                 ref={titleLine1Ref}
-                className=" text-center transform leading-[130%] tracking-[-0.06em]"
+                className=" text-center transform leading-[100%] tracking-[-0.06em]"
               >
                 Effortless Blockchain
               </h1>
               <h1
                 ref={titleLine2Ref}
-                className="text-center lg:mt-2 md:mt-2 sm:mt-0 mt-0 transform leading-[130%] tracking-[-0.06em]"
+                className="text-center lg:mt-2 md:mt-2 sm:mt-0 mt-0 transform leading-[100%] tracking-[-0.06em]"
               >
                 Automation
               </h1>
               <h1
                 ref={titleLine3Ref}
-                className=" text-center lg:mt-2 md:mt-2 sm:mt-0 mt-0 transform leading-[130%] tracking-[-0.06em]"
+                className=" text-center lg:mt-2 md:mt-2 sm:mt-0 mt-0 transform leading-[100%] tracking-[-0.06em]"
               >
                 <span className="text-[#82FBD0]">.</span>Limitless Potential
                 <span className="text-[#82FBD0]">.</span>

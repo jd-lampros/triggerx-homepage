@@ -3,6 +3,7 @@ import React from "react";
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import logo from "../app/assets/logo.svg";
+import crystal from "../app/assets/crystal_hero-2.png";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -259,10 +260,18 @@ const Header = () => {
     <>
       {/* Desktop Header */}
       <div
-        ref={headerRef}
+
         className={`fixed top-0 left-0 w-full z-[9999] bg-transparent ${isMobile ? "hidden" : "block"} ${!animationCompleted ? "opacity-0" : ""}`}
       >
-        <div className="w-full h-[150px] flex justify-center items-center">
+
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 2xl:w-[30vw] lg:w-[32vw] md:w-[30vw] w-[35vw] h-full">
+          <div className="relative w-full h-full 2xl:translate-y-[-180%] lg:translate-y-[-152%] translate-y-[-130%]">
+            <Image src={crystal} alt="TriggerX Logo" className="w-full" />
+          </div>
+        </div>
+
+
+        <div className="w-full h-[150px] flex justify-center items-center" ref={headerRef}>
           <div className="w-[90%] mx-auto bg-transparent ">
             <div className="w-full flex items-center justify-between header z-100">
               {/* Logo */}

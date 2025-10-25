@@ -2,7 +2,6 @@ import React, { useRef, useLayoutEffect } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image, { StaticImageData } from "next/image";
-import Link from "next/link";
 import icon1 from "../app/assets/1.png";
 import icon2 from "../app/assets/2.png";
 import icon3 from "../app/assets/3.png";
@@ -27,19 +26,12 @@ function WhatIsTriggerX() {
   const descriptionRef = useRef<HTMLParagraphElement>(null);
   const buttonRefs = useRef<HTMLDivElement[]>([]);
 
-  // Function to scroll to a section
-  const scrollToSection = (sectionId: string): void => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   useLayoutEffect(() => {
     if (!containerRef.current || itemsRef.current.length === 0) return;
 
     const items = itemsRef.current;
     const offset = 30;
+    const totalItems = items.length;
 
     // Setup initial positions
     gsap.set(items, {
@@ -47,50 +39,54 @@ function WhatIsTriggerX() {
       y: (index) => -offset * index,
       zIndex: (index) => items.length - index,
       position: "absolute",
-      // top: "50%",
-      // left: "50%",
-      // transform: "translate(-50%, -50%)",
     });
 
-    // Diagonal loop animation
-    function diagonalLoop(items: HTMLDivElement[]): () => void {
-      const totalItems: number = items.length;
-      let currentItem: number = 0;
+    // Create scroll-based animation with original diagonal stacking
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: "top top",
+        end: "bottom top", // Scroll from section top to bottom
+        pin: true,
+        scrub: 1,
+        anticipatePin: 1,
+        fastScrollEnd: true,
+        preventOverlaps: true,
 
-      function updatePositions(): void {
-        for (let i = 0; i < totalItems; i++) {
-          const itemIndex: number = (currentItem + i) % totalItems;
-          const item: HTMLDivElement = items[itemIndex];
-          gsap.to(item, {
-            x: offset * i,
-            y: -offset * i,
-            zIndex: totalItems - i,
-            scale: 1,
-            opacity: 1,
-            duration: 0.8,
-            ease: "power2.out",
-          });
+        onUpdate: (self) => {
+          const progress = self.progress;
+          const currentCardIndex = Math.floor(progress * totalItems);
+
+          // Update positions for all cards in the diagonal stack
+          for (let i = 0; i < totalItems; i++) {
+            const itemIndex = (currentCardIndex + i) % totalItems;
+            const item = items[itemIndex];
+
+            if (item) {
+              // Set z-index immediately to prevent layering issues
+              gsap.set(item, { zIndex: totalItems - i });
+
+              // Then animate position and other properties
+              gsap.to(item, {
+                x: offset * i,
+                y: -offset * i,
+                scale: 1,
+                opacity: 1,
+                duration: 0.3,
+                ease: "power2.out",
+              });
+            }
+          }
         }
       }
+    });
 
-      function moveToNext(): void {
-        currentItem = (currentItem + 1) % totalItems;
-        updatePositions();
-      }
-
-      const interval: NodeJS.Timeout = setInterval(moveToNext, 3000); // Every 3 seconds
-      updatePositions();
-
-      // Cleanup function
-      return () => clearInterval(interval);
-    }
-
-    const cleanup = diagonalLoop(items);
-
-    return cleanup;
+    return () => {
+      tl.kill();
+    };
   }, []);
 
-  // GSAP Animations
+  // GSAP Animations for initial reveal
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
       // Set initial states
@@ -107,13 +103,12 @@ function WhatIsTriggerX() {
         }
       );
 
-      // Create timeline
+      // Create timeline for initial reveal
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: "top 50%",
-          end: "center center",
-
+          start: "top 80%",
+          end: "top 20%",
           scrub: 1,
           preventOverlaps: true,
           fastScrollEnd: true,
