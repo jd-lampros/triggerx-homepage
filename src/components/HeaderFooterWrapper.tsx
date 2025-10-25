@@ -11,7 +11,7 @@ export default function HeaderFooterWrapper({ children }: { children: React.Reac
   return (
     <div className="overflow-x-hidden relative">
       <Header />
-      <main className="relative z-30 pt-[50px]">{children}</main>
+      <main className="relative z-30">{children}</main>
       {!isStudioPage &&
         <Footer />}
     </div>

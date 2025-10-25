@@ -10,9 +10,19 @@ import SecurityEigenLayerSection from "./SecurityEigenLayerSection";
 import WhoIsTriggerXFor from "./WhoIsTriggerXFor";
 import ReliableKeeperNetwork from "./ReliableKeeperNetwork";
 import FutureOfBlockchainHero from "./FutureOfBlockchainHero";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import AnimatedButton from "./ui/AnimatedButton";
 
 function HeroSection() {
-
+  // Refs for animation elements
+  const titleRef = useRef<HTMLDivElement>(null);
+  const titleLine1Ref = useRef<HTMLHeadingElement>(null);
+  const titleLine2Ref = useRef<HTMLHeadingElement>(null);
+  const titleLine3Ref = useRef<HTMLHeadingElement>(null);
+  const poweredByRef = useRef<HTMLHeadingElement>(null);
+  const buttonsRef = useRef<HTMLDivElement>(null);
+  const [animationCompleted, setAnimationCompleted] = useState(false);
 
   // useEffect(() => {
   //   // Always scroll to the top of the page on component mount/refresh
@@ -149,61 +159,140 @@ function HeroSection() {
   //   return () => window.removeEventListener("scroll", handleVisibility);
   // }, []);
 
+  // GSAP animation for hero section entrance
+  useGSAP(() => {
+    // Preloader total duration is 4.0 seconds
+    const PRELOADER_DURATION = 4.0; // seconds
+
+    // Function to animate hero content
+    const animateHeroContent = () => {
+      if (!titleLine1Ref.current || !titleLine2Ref.current || !titleLine3Ref.current ||
+        !poweredByRef.current || !buttonsRef.current) return;
+
+      // Set initial positions (below viewport)
+      gsap.set([titleLine1Ref.current, titleLine2Ref.current, titleLine3Ref.current], {
+        y: 100,
+        opacity: 0
+      });
+      gsap.set([poweredByRef.current, buttonsRef.current], {
+        y: 80,
+        opacity: 0
+      });
+
+      // Create timeline for hero animations
+      const tl = gsap.timeline();
+
+      // Animate title lines from bottom to top with stagger
+      tl.to([titleLine1Ref.current, titleLine2Ref.current, titleLine3Ref.current], {
+        duration: 0.8,
+        y: 0,
+        opacity: 1,
+        ease: "power2.out",
+        stagger: 0.2, // 0.2s delay between each line
+      })
+        // Then animate powered by section
+        .to(poweredByRef.current, {
+          duration: 0.6,
+          y: 0,
+          opacity: 1,
+          ease: "power2.out",
+        }, "-=0.4") // Start 0.4s before previous animation ends
+        // Finally animate buttons
+        .to(buttonsRef.current, {
+          duration: 0.6,
+          y: 0,
+          opacity: 1,
+          ease: "power2.out",
+        }, "-=0.2"); // Start 0.2s before previous animation ends
+
+      setAnimationCompleted(true);
+    };
+
+    // Start hero animation after preloader completes
+    const timer = setTimeout(() => {
+      animateHeroContent();
+    }, PRELOADER_DURATION * 1000); // Convert to milliseconds
+
+    // Cleanup timer on unmount
+    return () => {
+      clearTimeout(timer);
+    };
+  }, []);
+
   return (
     <>
       <div className="relative z-0 mx-auto">
         <div className="relative -z-10">
           {/* Hero Section */}
-          <section className="mb-20 min-h-screen mx-auto flex flex-col justify-center items-center">
+          <section className={`pt-20 mb-20 border min-h-screen mx-auto flex flex-col justify-center items-center ${!animationCompleted ? "opacity-0" : ""}`}>
             <div
-              className="font-sharpGrotesk w-[90%] mx-auto  text-center text-4xl sm:text-5xl md:text-5xl lg:text-[70px] "
+              ref={titleRef}
+              className="font-sharpGrotesk w-[90%] mx-auto  text-center text-4xl sm:text-4xl md:text-6xl xl:text-[5vw] 2xl:text-[5vw]"
               id="target-section"
             >
-              <h1 className=" text-center text-4xl sm:text-4xl md:text-5xl xl:text-[64px] 2xl:text-[4vw] transform  leading-[130%] tracking-[-0.06em]">
+              <h1
+                ref={titleLine1Ref}
+                className=" text-center transform leading-[130%] tracking-[-0.06em]"
+              >
                 Effortless Blockchain
               </h1>
-              <h1 className="text-center text-4xl sm:text-4xl md:text-5xl xl:text-[64px] 2xl:text-[4vw] lg:mt-3 md:mt-3 sm:mt-0 mt-0 transform  leading-[130%] tracking-[-0.06em]">
+              <h1
+                ref={titleLine2Ref}
+                className="text-center lg:mt-2 md:mt-2 sm:mt-0 mt-0 transform leading-[130%] tracking-[-0.06em]"
+              >
                 Automation
               </h1>
-              <h1 className=" text-center text-4xl sm:text4xl md:text-5xl xl:text-[64px] 2xl:text-[4vw] lg:mt-3 md:mt-3 sm:mt-0 mt-0 transform leading-[130%] tracking-[-0.06em]">
+              <h1
+                ref={titleLine3Ref}
+                className=" text-center lg:mt-2 md:mt-2 sm:mt-0 mt-0 transform leading-[130%] tracking-[-0.06em]"
+              >
                 <span className="text-[#82FBD0]">.</span>Limitless Potential
                 <span className="text-[#82FBD0]">.</span>
               </h1>
             </div>
 
-            <h4 className="flex items-center gap-4 relative text-[#A2A2A2] font-actayRegular text-center text-xs sm:text-base lg:text-lg py-3 sm:py-5 px-6 sm:px-16 lg:px-20 xl:px-36 tracking-wide leading-[2rem] font-normal w-fit mx-auto my-6 md:my-10">
+            <h4
+              ref={poweredByRef}
+              className="flex items-center gap-4 relative text-[#A2A2A2] font-actayRegular text-center text-sm sm:text-lg lg:text-xl py-3 sm:py-5 px-6 sm:px-16 lg:px-20 xl:px-36 tracking-wide leading-[2rem] font-normal w-fit mx-auto my-6 md:my-10"
+            >
               Powered by{" "}
               <Image
                 src={eigenlayer}
                 alt="Eigenlayer"
                 width={80}
                 height={80}
+                quality={100}
                 className="w-16 md:w-20 lg:w-22 h-auto"
               ></Image>
               <div className="absolute top-0 left-0 w-4 h-4 sm:w-5 sm:h-5 border-t-2 border-l-2 sm:border-t-4 sm:border-l-4 border-[#5047FF] rounded-tl-md sm:rounded-tl-xl"></div>
               <div className="absolute bottom-0 right-0 w-4 h-4 sm:w-5 sm:h-5 border-b-2 border-r-2 sm:border-b-4 sm:border-r-4 border-[#5047FF] rounded-br-md sm:rounded-br-xl"></div>
             </h4>
 
-            <div className="flex gap-4 justify-center">
-              <Link href="https://app.triggerx.network/" target="blank">
+            <div ref={buttonsRef} className="flex gap-4 justify-center">
+              <AnimatedButton
+                href="https://app.triggerx.network/"
+
+                variant="yellow_outline"
+                flairColor="#f8ff7c"
+                className="w-50  md:px-6 md:py-3 md:text-lg px-5 py-2.5 text-base"
+              >
+                <button className="text-[#f8ff7c]">Start Building</button>
+              </AnimatedButton>
+              {/* <Link href="https://app.triggerx.network/" target="blank">
                 <button className="relative bg-[#222222] text-[#000000] border border-[#222222] px-6 py-2 sm:px-8 sm:py-3 rounded-full group transition-transform">
-                  <span className="absolute inset-0 bg-[#222222] border border-[#FFFFFF80]/50 rounded-full scale-100 translate-y-0 transition-all duration-300 ease-out group-hover:translate-y-2"></span>
-                  <span className="absolute inset-0 bg-[#F8FF7C] rounded-full scale-100 translate-y-0 group-hover:translate-y-0"></span>
                   <span className="font-actayRegular relative z-10 px-0 py-3 sm:px-3 md:px-6 lg:px-2 rounded-full translate-y-2 group-hover:translate-y-0 transition-all duration-300 ease-out text-xs sm:text-base">
                     Start Building
                   </span>
                 </button>
-              </Link>
-              <button
-                onClick={() => { }}
-                className="relative bg-transparent text-[#F8FF7C] border border-black px-6 py-2 sm:px-8 sm:py-3 rounded-full group transition-transform"
+              </Link> */}
+              <AnimatedButton
+                href="https://app.triggerx.network/"
+                variant="white_outline"
+                flairColor="white"
+                className="w-50  md:px-6 md:py-3 md:text-lg px-5 py-2.5 text-base"
               >
-                <span className="absolute inset-0 bg-transparent border border-[#FFFFFF80]/50 rounded-full scale-100 translate-y-0 transition-all duration-300 ease-out group-hover:translate-y-2"></span>
-                <span className="absolute inset-0 bg-transparent rounded-full scale-100 translate-y-0 group-hover:translate-y-0"></span>
-                <span className="font-actayRegular relative z-10 px-0 py-3 sm:px-3 md:px-6 lg:px-2 rounded-full translate-y-2 group-hover:translate-y-0 transition-all duration-300 ease-out text-xs sm:text-base text-white">
-                  Let&apos;s Talk
-                </span>
-              </button>
+                <button className="text-white">Let&apos;s Talk</button>
+              </AnimatedButton>
             </div>
           </section>
 

@@ -7,6 +7,7 @@ import icon1 from "../app/assets/1.png";
 import icon2 from "../app/assets/2.png";
 import icon3 from "../app/assets/3.png";
 import icon4 from "../app/assets/4.png";
+import AnimatedButton from "./ui/AnimatedButton";
 
 // Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger);
@@ -24,7 +25,7 @@ function WhatIsTriggerX() {
   const sectionRef = useRef<HTMLElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const descriptionRef = useRef<HTMLParagraphElement>(null);
-  const buttonRefs = useRef<HTMLButtonElement[]>([]);
+  const buttonRefs = useRef<HTMLDivElement[]>([]);
 
   // Function to scroll to a section
   const scrollToSection = (sectionId: string): void => {
@@ -172,22 +173,22 @@ function WhatIsTriggerX() {
   return (
     <section
       ref={sectionRef}
-      className="mx-auto w-[90%] lg:mb-0 max-w-[2100px]"
+      className="mx-auto w-[90%] lg:mb-0 max-w-[1600px]"
     >
       {/* Parent Container */}
       <div className="p-6 sm:p-8 lg:p-12 xl:p-16 2xl:p-20 w-full mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left Side - Title and Description */}
-          <div className="text-center space-y-8">
+          <div className="text-center space-y-12">
             <h1
               ref={titleRef}
-              className="font-sharpGrotesk text-3xl sm:text-4xl lg:text-5xl xl:text-5xl 2xl:text-5xl text-white mb-6 lg:mb-8"
+              className="font-sharpGrotesk text-3xl sm:text-4xl lg:text-[3vw] xl:text-[3vw] 2xl:text-[3vw] text-white mb-8 lg:mb-8"
             >
               What is &apos;TriggerX&apos;?
             </h1>
             <p
               ref={descriptionRef}
-              className="text-[#A2A2A2] font-normal font-actayRegular sm:text-lg lg:text-xl xl:text-2xl leading-relaxed mb-8"
+              className="text-[#A2A2A2] font-normal font-actayRegular sm:text-lg lg:text-2xl xl:text-2xl 2xl:text-3xl leading-relaxed mb-8"
             >
               TriggerX is a decentralized automation layer for the multi-chain
               world. Instead of reinventing automation for every network,
@@ -195,33 +196,37 @@ function WhatIsTriggerX() {
               works.
             </p>
             <div className="flex gap-4 justify-center">
-              <Link href="https://app.triggerx.network/" target="blank">
-                <button
-                  ref={(el) => {
-                    if (el) buttonRefs.current[0] = el;
-                  }}
-                  className="relative bg-[#222222] text-[#000000] border border-[#222222] px-6 py-2 sm:px-8 sm:py-3 rounded-full group transition-transform"
+              <div ref={(el) => {
+                if (el) {
+                  buttonRefs.current[0] = el;
+                }
+              }}>
+                <AnimatedButton
+                  href="https://app.triggerx.network/"
+                  variant="yellow_outline"
+                  flairColor="#f8ff7c"
+                  className="w-50  md:px-6 md:py-3 md:text-lg px-5 py-2.5 text-base"
+
                 >
-                  <span className="absolute inset-0 bg-[#222222] border border-[#FFFFFF80]/50 rounded-full scale-100 translate-y-0 transition-all duration-300 ease-out group-hover:translate-y-2"></span>
-                  <span className="absolute inset-0 bg-[#F8FF7C] rounded-full scale-100 translate-y-0 group-hover:translate-y-0"></span>
-                  <span className="font-actayRegular relative z-10 px-0 py-3 sm:px-3 md:px-6 lg:px-2 rounded-full translate-y-2 group-hover:translate-y-0 transition-all duration-300 ease-out text-xs sm:text-base">
-                    Start Building
-                  </span>
-                </button>
-              </Link>
-              <button
-                ref={(el) => {
-                  if (el) buttonRefs.current[1] = el;
-                }}
-                onClick={() => scrollToSection("contact-section")}
-                className="relative bg-transparent text-[#F8FF7C] border border-black px-6 py-2 sm:px-8 sm:py-3 rounded-full group transition-transform"
-              >
-                <span className="absolute inset-0 bg-transparent border border-[#FFFFFF80]/50 rounded-full scale-100 translate-y-0 transition-all duration-300 ease-out group-hover:translate-y-2"></span>
-                <span className="absolute inset-0 bg-transparent rounded-full scale-100 translate-y-0 group-hover:translate-y-0"></span>
-                <span className="font-actayRegular relative z-10 px-0 py-3 sm:px-3 md:px-6 lg:px-2 rounded-full translate-y-2 group-hover:translate-y-0 transition-all duration-300 ease-out text-xs sm:text-base text-white">
-                  Let&apos;s Talk
-                </span>
-              </button>
+                  <button className="text-[#f8ff7c]">Start Building</button>
+                </AnimatedButton>
+              </div>
+
+              <div ref={(el) => {
+                if (el) {
+                  buttonRefs.current[1] = el;
+                }
+              }}>
+                <AnimatedButton
+                  href="https://app.triggerx.network/"
+                  variant="white_outline"
+                  flairColor="white"
+                  className="w-50  md:px-6 md:py-3 md:text-lg px-5 py-2.5 text-base"
+
+                >
+                  <button>Let&apos;s Talk</button>
+                </AnimatedButton>
+              </div>
             </div>
           </div>
 

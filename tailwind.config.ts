@@ -11,10 +11,18 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        "tx-yellow": "#f8ff7c",
       },
       fontFamily: {
         sans: ["var(--font-geist-sans)", "Arial", "Helvetica", "sans-serif"],
         mono: ["var(--font-geist-mono)", "monospace"],
+        sharpGrotesk: ["var(--font-sharp-grotesk-light-25)", "sans-serif"],
+        sharpGroteskMedium20: [
+          "var(--font-sharp-grotesk-medium-20)",
+          "sans-serif",
+        ],
+        actay: ["var(--font-actay-regular)", "sans-serif"],
+        actayWide: ["var(--font-actay-wide-bold)", "sans-serif"],
       },
     },
   },

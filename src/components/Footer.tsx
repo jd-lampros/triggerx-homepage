@@ -233,6 +233,8 @@ function Footer() {
           alt="TriggerX Footer Banner"
           className="w-full h-50"
           priority={false}
+          quality={100}
+          loading="lazy"
         />
       </div>
 

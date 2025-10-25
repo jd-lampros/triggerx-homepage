@@ -80,7 +80,7 @@ function WhoIsTriggerXFor() {
           {
             opacity: 1,
             y: 0,
-            duration: 0.8,
+            duration: 0.4,
             ease: "power2.out",
           },
           "-=0.4"
@@ -147,7 +147,7 @@ function WhoIsTriggerXFor() {
 
   return (
     <section ref={sectionRef} className="mx-auto my-20 py-20 max-w-[2100px]">
-      <div className="w-[90%] mx-auto text-center">
+      <div className="w-[90%] mx-auto text-center space-y-12 mb-12">
         {/* Logo Placeholder */}
         <div
           ref={imageRef}
@@ -166,7 +166,7 @@ function WhoIsTriggerXFor() {
         {/* Title */}
         <h1
           ref={titleRef}
-          className="font-sharpGrotesk text-3xl sm:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl text-white mb-6 lg:mb-8"
+          className="font-sharpGrotesk text-3xl sm:text-4xl lg:text-[3vw] xl:text-[3vw] 2xl:text-[3vw] text-white mb-6 lg:mb-8"
         >
           Who is TriggerX For?
         </h1>
@@ -174,7 +174,7 @@ function WhoIsTriggerXFor() {
         {/* Description */}
         <p
           ref={descriptionRef}
-          className="text-[#A2A2A2] text-base sm:text-lg lg:text-xl xl:text-2xl max-w-4xl mx-auto leading-relaxed mb-8 lg:mb-12 px-4"
+          className="text-[#A2A2A2] text-base sm:text-lg lg:text-2xl xl:text-2xl 2xl:text-3xl max-w-4xl mx-auto leading-relaxed mb-8 lg:mb-12 px-4"
         >
           Whether you&apos;re a dApp developer, DeFi protocol creator, or
           enterprise innovator, TriggerX empowers you to automate tasks with
@@ -184,7 +184,7 @@ function WhoIsTriggerXFor() {
         {/* Use Cases Subtitle */}
         <h2
           ref={subtitleRef}
-          className="text-[#F8FF7C] text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-actayWide font-bold mb-8 lg:mb-12"
+          className="text-[#F8FF7C] text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-actayWide font-bold mb-8 lg:mb-12 disable-grid-effect"
         >
           Use cases include
         </h2>

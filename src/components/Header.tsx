@@ -6,6 +6,8 @@ import logo from "../app/assets/logo.svg";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
 
 
 const Header = () => {
@@ -16,11 +18,13 @@ const Header = () => {
   const [scrollToSection, setScrollToSection] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [animationCompleted, setAnimationCompleted] = useState(false);
 
   // Refs for DOM elements used in navigation
   const navRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
+  const headerRef = useRef<HTMLDivElement>(null);
+  const logoRef = useRef<HTMLDivElement>(null);
   // Next.js router and current path
   const router = useRouter();
   const pathname = usePathname();
@@ -202,11 +206,61 @@ const Header = () => {
     };
   }, [isMobile]);
 
+  // GSAP animation for header entrance
+  useGSAP(() => {
+    // Preloader total duration is 4.0 seconds
+    // Character animations: 2.8s (last character finishes)
+    // Characters move up: 1s (starts at 2.8s, ends at 3.8s)
+    // SVG curve: 0.4s (starts at 3.2s, ends at 3.6s)
+    // SVG flat: 0.4s (starts at 3.6s, ends at 4.0s)
+    const PRELOADER_DURATION = 4.0; // seconds
+
+    // Function to animate header
+    const animateHeader = () => {
+      if (!headerRef.current || !logoRef.current) return;
+
+      // Set initial positions
+      gsap.set(headerRef.current, { y: -200, opacity: 0 });
+      gsap.set(logoRef.current, { y: -100, opacity: 0 });
+
+      // Create timeline for header animations
+      const tl = gsap.timeline();
+
+      // Animate header sliding down from top
+      tl.to(headerRef.current, {
+        duration: 0.8,
+        y: 0,
+        opacity: 1,
+        ease: "power2.out",
+      })
+        // Then animate logo with a slight delay
+        .to(logoRef.current, {
+          duration: 0.6,
+          y: 0,
+          opacity: 1,
+          ease: "power2.out",
+        }, "-=0.3");
+
+      setAnimationCompleted(true);
+    };
+
+    // Start header animation after preloader completes
+    const timer = setTimeout(() => {
+      animateHeader();
+    }, PRELOADER_DURATION * 1000); // Convert to milliseconds
+
+    // Cleanup timer on unmount
+    return () => {
+      clearTimeout(timer);
+    };
+  }, []);
+
   return (
     <>
       {/* Desktop Header */}
       <div
-        className={`fixed top-0 left-0 w-full z-[9999] bg-transparent ${isMobile ? "hidden" : "block"}`}
+        ref={headerRef}
+        className={`fixed top-0 left-0 w-full z-[9999] bg-transparent ${isMobile ? "hidden" : "block"} ${!animationCompleted ? "opacity-0" : ""}`}
       >
         <div className="w-full h-[150px] flex justify-center items-center">
           <div className="w-[90%] mx-auto bg-transparent ">
@@ -214,6 +268,7 @@ const Header = () => {
               {/* Logo */}
               <div className="flex-shrink-0 w-60">
                 <div
+                  ref={logoRef}
                   onClick={handleLogoClick}
                   className="relative cursor-pointer"
                 >

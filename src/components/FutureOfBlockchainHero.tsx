@@ -6,6 +6,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import getStarted from "@/app/assets/get_started.png";
 import { useGSAP } from "@gsap/react";
+import AnimatedButton from "./ui/AnimatedButton";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -123,7 +124,6 @@ function FutureOfBlockchainHero() {
           backdropFilter: "blur(10px)",
         }}
       >
-        {/* Get Started Image */}
         <div
           ref={imageRef}
           className="w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 xl:w-56 xl:h-56 relative"
@@ -142,7 +142,7 @@ function FutureOfBlockchainHero() {
         <div className="space-y-4 lg:space-y-6">
           <h3
             ref={titleRef}
-            className="font-sharpGrotesk text-2xl sm:text-4xl lg:text-3xl xl:text-2xl 2xl:text-2xl text-white leading-tight tracking-tight"
+            className="font-sharpGrotesk text-2xl sm:text-4xl lg:text-3xl xl:text-2xl 2xl:text-[1.5vw] text-white leading-tight tracking-tight"
           >
             The future of blockchain is automated. Trigger it with TriggerX
           </h3>
@@ -150,11 +150,19 @@ function FutureOfBlockchainHero() {
 
         {/* CTA Button */}
         <div ref={buttonRef} className="pt-4">
-          <Link href="https://app.triggerx.network/" target="blank">
+          {/* <Link href="https://app.triggerx.network/" target="blank">
             <button className="relative bg-white text-black px-8 py-4 lg:px-12 lg:py-5 rounded-full font-actayRegular text-base lg:text-lg font-semibold transition-all duration-300 hover:shadow-lg">
               Start Building
             </button>
-          </Link>
+          </Link> */}
+          <AnimatedButton
+            href="https://app.triggerx.network/"
+            variant="white_outline"
+            flairColor="white"
+            className="w-50  md:px-6 md:py-3 md:text-lg px-5 py-2.5 text-base"
+          >
+            <button className="text-white">Start Building</button>
+          </AnimatedButton>
         </div>
       </div>
     </section>

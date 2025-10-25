@@ -11,32 +11,28 @@ import { ScrollTrigger, ScrollSmoother } from "gsap/all";
 import GridBackground from "@/components/GridBackground";
 import Preloader from "@/components/Preloader";
 
-const actayRegular = localFont({
-  src: [
-    {
-      path: "../../public/fonts/Actay-Regular.otf",
-      weight: "400",
-      style: "normal",
-    },
-  ],
-  variable: "--font-actay-regular",
-  display: "swap",
-});
-
-const sharpGrotesk300 = localFont({
+const sharpGrotesk300Light25 = localFont({
   src: "../../public/fonts/SharpGrotesk-Light25.otf",
   weight: "300",
   style: "normal",
-  variable: "--font-sharp-grotesk",
+  variable: "--font-sharp-grotesk-light-25",
   display: "swap",
 });
 
-const sharpGrotesk700 = localFont({
-  src: "../../public/fonts/SharpGrotesk-Medium20.otf",
-  weight: "600",
+const sharpGroteskMedium20 = localFont({
+  src: "../../public/fonts/ActayWide-Bold.otf",
+  weight: "500",
   style: "normal",
-  variable: "--font-sharp-grotesk-medium",
+  variable: "--font-sharp-grotesk-medium-20",
   display: "swap",
+});
+
+const actayRegular = localFont({
+  src: "../../public/fonts/Actay-Regular.otf",
+  weight: "400",
+  style: "normal",
+  display: "swap",
+  variable: "--font-actay-regular",
 });
 
 const actayWideBold = localFont({
@@ -71,7 +67,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${actayRegular.variable} ${sharpGrotesk300.variable} ${actayWideBold.variable} ${sharpGrotesk700.variable} `}
+      className={`${actayRegular.variable} ${sharpGrotesk300Light25.variable} ${sharpGroteskMedium20.variable} ${actayWideBold.variable}`}
     >
       <GoogleTagManager gtmId="GTM-T9XQH8N8" />
       <body suppressHydrationWarning>
