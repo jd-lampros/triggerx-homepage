@@ -2,7 +2,6 @@
 import { useRef, useState } from "react";
 import Image from "next/image";
 // Removed unused asset imports moved into ReliableKeeperNetwork
-import Link from "next/link";
 import eigenlayer from "@/app/assets/HeaderHerosection svgs/Eigenlayer.svg";
 import TextRevealSection from "./TextRevealSection";
 import WhatIsTriggerX from "./WhatIsTriggerX";
@@ -13,6 +12,7 @@ import FutureOfBlockchainHero from "./FutureOfBlockchainHero";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import AnimatedButton from "./ui/AnimatedButton";
+import MarqueeWords from "./MarqueeWords";
 
 function HeroSection() {
   // Refs for animation elements
@@ -166,14 +166,9 @@ function HeroSection() {
 
     // Function to animate hero content
     const animateHeroContent = () => {
-      if (!titleLine1Ref.current || !titleLine2Ref.current || !titleLine3Ref.current ||
-        !poweredByRef.current || !buttonsRef.current) return;
+      if (!poweredByRef.current || !buttonsRef.current) return;
 
       // Set initial positions (below viewport)
-      gsap.set([titleLine1Ref.current, titleLine2Ref.current, titleLine3Ref.current], {
-        y: 100,
-        opacity: 0
-      });
       gsap.set([poweredByRef.current, buttonsRef.current], {
         y: 80,
         opacity: 0
@@ -182,21 +177,29 @@ function HeroSection() {
       // Create timeline for hero animations
       const tl = gsap.timeline();
 
-      // Animate title lines from bottom to top with stagger
-      tl.to([titleLine1Ref.current, titleLine2Ref.current, titleLine3Ref.current], {
-        duration: 0.8,
-        y: 0,
-        opacity: 1,
-        ease: "power2.out",
-        stagger: 0.2, // 0.2s delay between each line
-      })
-        // Then animate powered by section
-        .to(poweredByRef.current, {
-          duration: 0.6,
+      // Animate title section (desktop only)
+      if (titleLine1Ref.current && titleLine2Ref.current && titleLine3Ref.current) {
+        gsap.set([titleLine1Ref.current, titleLine2Ref.current, titleLine3Ref.current], {
+          y: 100,
+          opacity: 0
+        });
+
+        tl.to([titleLine1Ref.current, titleLine2Ref.current, titleLine3Ref.current], {
+          duration: 0.8,
           y: 0,
           opacity: 1,
           ease: "power2.out",
-        }, "-=0.4") // Start 0.4s before previous animation ends
+          stagger: 0.2, // 0.2s delay between each line
+        });
+      }
+
+      // Then animate powered by section
+      tl.to(poweredByRef.current, {
+        duration: 0.6,
+        y: 0,
+        opacity: 1,
+        ease: "power2.out",
+      }, "-=0.4") // Start 0.4s before previous animation ends
         // Finally animate buttons
         .to(buttonsRef.current, {
           duration: 0.6,
@@ -224,31 +227,43 @@ function HeroSection() {
       <div className="relative z-0 mx-auto">
         <div className="relative z-10">
           {/* Hero Section */}
-          <section className={`pt-10 lg:pt-40 mb-20 min-h-screen mx-auto flex flex-col justify-center items-center ${!animationCompleted ? "opacity-0" : ""}`}>
+          <section className={`pt-40 lg:pt-40 md:mb-20 mb-0 min-h-[calc(100vh-90px)] md:min-h-screen mx-auto flex flex-col justify-center items-center ${!animationCompleted ? "opacity-0" : ""}`}>
             <div
               ref={titleRef}
-              className="font-sharpGrotesk w-[90%] mx-auto  text-center text-4xl sm:text-4xl md:text-6xl xl:text-[5vw] 2xl:text-[5vw]"
+              className="font-sharpGrotesk w-full text-center"
               id="target-section"
             >
-              <h1
-                ref={titleLine1Ref}
-                className=" text-center transform leading-[100%] tracking-[-0.06em]"
-              >
-                Effortless Blockchain
-              </h1>
-              <h1
-                ref={titleLine2Ref}
-                className="text-center lg:mt-2 md:mt-2 sm:mt-0 mt-0 transform leading-[100%] tracking-[-0.06em]"
-              >
-                Automation
-              </h1>
-              <h1
-                ref={titleLine3Ref}
-                className=" text-center lg:mt-2 md:mt-2 sm:mt-0 mt-0 transform leading-[100%] tracking-[-0.06em]"
-              >
-                <span className="text-[#82FBD0]">.</span>Limitless Potential
-                <span className="text-[#82FBD0]">.</span>
-              </h1>
+              {/* Desktop Title */}
+              <div className="hidden lg:block text-4xl sm:text-4xl md:text-6xl xl:text-[5vw] 2xl:text-[5vw]">
+                <h1
+                  ref={titleLine1Ref}
+                  className="text-center transform leading-[100%] tracking-[-0.06em]"
+                >
+                  Effortless Blockchain
+                </h1>
+                <h1
+                  ref={titleLine2Ref}
+                  className="text-center lg:mt-2 md:mt-2 sm:mt-0 mt-0 transform leading-[100%] tracking-[-0.06em]"
+                >
+                  Automation
+                </h1>
+                <h1
+                  ref={titleLine3Ref}
+                  className="text-center lg:mt-2 md:mt-2 sm:mt-0 mt-0 transform leading-[100%] tracking-[-0.06em]"
+                >
+                  <span className="text-[#82FBD0]">.</span>Limitless Potential
+                  <span className="text-[#82FBD0]">.</span>
+                </h1>
+              </div>
+
+              {/* Mobile Marquee Words */}
+              <div className="lg:hidden">
+                <MarqueeWords
+                  words={["Effortless", "Blockchain", "Automation", "Limitless", "Potential"]}
+                  speed={0.5}
+                  className="mb-8"
+                />
+              </div>
             </div>
 
             <h4

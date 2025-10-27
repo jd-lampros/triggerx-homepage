@@ -16,6 +16,7 @@ const MOUSE_THROTTLE = 4; // Minimal mouse throttling for maximum responsiveness
 
 export default function GridBackground() {
   const [isClient, setIsClient] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -40,13 +41,23 @@ export default function GridBackground() {
     animationFrameId: 0,
   });
 
-  // Set client-side state
+  // Set client-side state and detect mobile
   useEffect(() => {
     setIsClient(true);
+
+    // Check if screen is mobile size (768px and below)
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    checkIsMobile();
+    window.addEventListener('resize', checkIsMobile);
+
+    return () => window.removeEventListener('resize', checkIsMobile);
   }, []);
 
   useEffect(() => {
-    if (!isClient || !containerRef.current) return;
+    if (!isClient || !containerRef.current || isMobile) return;
 
     try {
       console.log('Initializing Three.js...');
@@ -349,11 +360,14 @@ export default function GridBackground() {
       // Cleanup with performance monitoring
       return () => {
         // Cancel animation frame
-        if (performanceState.current.animationFrameId) {
-          cancelAnimationFrame(performanceState.current.animationFrameId);
+        const currentPerformanceState = performanceState.current;
+        const currentAnimationRef = animationRef.current;
+
+        if (currentPerformanceState.animationFrameId) {
+          cancelAnimationFrame(currentPerformanceState.animationFrameId);
         }
-        if (animationRef.current) {
-          cancelAnimationFrame(animationRef.current);
+        if (currentAnimationRef) {
+          cancelAnimationFrame(currentAnimationRef);
         }
 
         // Remove event listeners
@@ -389,7 +403,12 @@ export default function GridBackground() {
       console.error('Three.js initialization error:', err);
       setError('Failed to initialize 3D graphics. Please check your browser compatibility.');
     }
-  }, [isClient]);
+  }, [isClient, isMobile]);
+
+  // Don't render anything on mobile - use CSS background instead
+  if (isMobile) {
+    return null;
+  }
 
   // Show loading or error state
   if (!isClient) {

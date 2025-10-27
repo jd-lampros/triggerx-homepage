@@ -136,9 +136,9 @@ const TextRevealSection = () => {
             viewBox="0 0 230 27"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            className="inline-block w-auto ml-4 md:h-[8vw] h-[10vw]"
+            className="inline-block w-auto md:ml-4 md:h-[8vw] h-[10vw]"
           >
-            <g clipPath="url(#clip0_7_598)">
+            <g clipPath="url(#clip0_7_600)">
               <path
                 fillRule="evenodd"
                 clipRule="evenodd"
@@ -182,13 +182,13 @@ const TextRevealSection = () => {
                 fillRule="evenodd"
                 clipRule="evenodd"
                 d="M182.242 0.711914L191.65 10.1211C192.453 10.9242 193.354 11.5693 194.315 12.0565C193.354 12.5437 192.453 13.1889 191.65 13.992L182.242 23.4009H192.034L195.226 20.2084C197.245 18.1887 200.453 18.0802 202.6 19.8831L205.668 22.9522C209.751 27.0352 216.371 27.0352 220.454 22.9522L229.862 13.5434H220.165L216.946 16.7628C214.822 18.8865 211.383 18.8986 209.245 16.7897L208.36 15.9178L206.435 13.992C205.632 13.189 204.731 12.5439 203.77 12.0567C204.731 11.5695 205.632 10.9243 206.435 10.1211L215.844 0.711914L206.147 0.712377L202.955 3.90492C200.82 6.03932 197.36 6.03932 195.226 3.90492L192.034 0.712377L182.242 0.711914Z"
-                fill="url(#paint0_linear_7_598)"
+                fill="url(#paint0_linear_7_600)"
                 className="logo-path"
               />
             </g>
             <defs>
               <linearGradient
-                id="paint0_linear_7_598"
+                id="paint0_linear_7_600"
                 x1="206.052"
                 y1="0.711914"
                 x2="206.052"
@@ -198,7 +198,7 @@ const TextRevealSection = () => {
                 <stop stopColor="#FBF197" />
                 <stop offset="1" stopColor="#82FBD0" />
               </linearGradient>
-              <clipPath id="clip0_7_598">
+              <clipPath id="clip0_7_600">
                 <rect width="230" height="26.1381" fill="white" />
               </clipPath>
             </defs>

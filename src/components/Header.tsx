@@ -428,7 +428,7 @@ const Header = () => {
           className="absolute top-0 left-0 right-0 w-full z-50"
         >
           <div className="w-full">
-            <div className="w-[100%] sm:px-10 px-5 flex justify-between gap-3 items-center py-10 header lg:hidden">
+            <div className="w-[100%] sm:px-10 px-2 flex justify-between gap-3 items-center py-10 header lg:hidden">
               <div className="relative z-10">
                 <div className="w-full relative">
                   <Image
@@ -439,14 +439,14 @@ const Header = () => {
                 </div>
               </div>
               <div
-                className="flex-shrink-0 relative z-10 "
+                className="flex-shrink-0 relative z-10"
               >
                 <div className="lg:hidden">
                   <div className="menu">
                     <svg
                       className={`ham hamRotate ham1 ${menuOpen ? 'active' : ''}`}
                       viewBox="0 0 100 100"
-                      width="40"
+                      width="50"
                       onClick={() => setMenuOpen(!menuOpen)}
                     >
                       <path className="line top" d="m 30,33 h 40 c 0,0 9.044436,-0.654587 9.044436,-8.508902 0,-7.854315 -8.024349,-11.958003 -14.89975,-10.85914 -6.875401,1.098863 -13.637059,4.171617 -13.637059,16.368042 v 40" />

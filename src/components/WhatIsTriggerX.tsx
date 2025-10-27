@@ -32,6 +32,7 @@ function WhatIsTriggerX() {
     const items = itemsRef.current;
     const offset = 30;
     const totalItems = items.length;
+    const breakPoint = 800; // lg breakpoint
 
     // Setup initial positions
     gsap.set(items, {
@@ -41,54 +42,259 @@ function WhatIsTriggerX() {
       position: "absolute",
     });
 
-    // Create scroll-based animation with original diagonal stacking
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: "top top",
-        end: "bottom top", // Scroll from section top to bottom
-        pin: true,
-        scrub: 1,
-        anticipatePin: 1,
-        fastScrollEnd: true,
-        preventOverlaps: true,
+    // Use GSAP matchMedia for responsive animations
+    const mm = gsap.matchMedia();
 
-        onUpdate: (self) => {
-          const progress = self.progress;
-          const currentCardIndex = Math.floor(progress * totalItems);
+    mm.add(
+      {
+        isDesktop: `(min-width: ${breakPoint}px)`,
+        isMobile: `(max-width: ${breakPoint - 1}px)`,
+        reduceMotion: "(prefers-reduced-motion: reduce)",
+      },
+      (context) => {
+        const { isDesktop, isMobile, reduceMotion } = context.conditions as {
+          isDesktop: boolean;
+          isMobile: boolean;
+          reduceMotion: boolean;
+        };
 
-          // Update positions for all cards in the diagonal stack
-          for (let i = 0; i < totalItems; i++) {
-            const itemIndex = (currentCardIndex + i) % totalItems;
-            const item = items[itemIndex];
+        if (isDesktop) {
+          // Desktop: Original scroll-based animation with diagonal stacking
+          const tl = gsap.timeline({
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top top",
+              end: "bottom top",
+              pin: true,
+              scrub: reduceMotion ? 0 : 1,
+              anticipatePin: 1,
+              fastScrollEnd: true,
+              preventOverlaps: true,
+              markers: false,
 
-            if (item) {
-              // Set z-index immediately to prevent layering issues
-              gsap.set(item, { zIndex: totalItems - i });
+              onUpdate: (self) => {
+                const progress = self.progress;
+                const currentCardIndex = Math.floor(progress * totalItems);
 
-              // Then animate position and other properties
-              gsap.to(item, {
-                x: offset * i,
-                y: -offset * i,
-                scale: 1,
-                opacity: 1,
-                duration: 0.3,
-                ease: "power2.out",
-              });
+                // Update positions for all cards in the diagonal stack
+                for (let i = 0; i < totalItems; i++) {
+                  const itemIndex = (currentCardIndex + i) % totalItems;
+                  const item = items[itemIndex];
+
+                  if (item) {
+                    // Set z-index immediately to prevent layering issues
+                    gsap.set(item, { zIndex: totalItems - i });
+
+                    // Then animate position and other properties
+                    gsap.to(item, {
+                      x: offset * i,
+                      y: -offset * i,
+                      scale: 1,
+                      opacity: 1,
+                      duration: reduceMotion ? 0 : 0.3,
+                      ease: "power2.out",
+                    });
+                  }
+                }
+              }
             }
+          });
+
+          return () => {
+            tl.kill();
+          };
+        } else if (isMobile) {
+          // Mobile: Manual touch/swipe slider
+          const cardWidth = 330; // Card width on mobile (w-80 = 20rem = 320px) - increased for full-width container
+          const containerWidth = containerRef.current?.offsetWidth || 400;
+          const cardSpacing = 12; // Space between cards
+
+          let isDragging = false;
+          let hasStartedDragging = false;
+          let startX = 0;
+          let startY = 0;
+          let currentX = 0;
+          let translateX = 0;
+          const dragThreshold = 10; // Minimum distance to start dragging
+
+          // Setup mobile slider positions - optimized for full-width container
+          const visibleCardWidth = cardWidth + cardSpacing;
+          const sideVisibleWidth = 50; // Increased visible side portion for full-width
+          const initialOffset = (containerWidth - cardWidth) / 2; // Center the first card
+          const maxTranslateX = Math.max(0, (totalItems - 1) * visibleCardWidth - (containerWidth - cardWidth - sideVisibleWidth));
+
+          gsap.set(items, {
+            x: (index) => initialOffset + index * visibleCardWidth,
+            y: 0,
+            zIndex: (index) => items.length - index,
+            position: "absolute",
+          });
+
+          // Touch event handlers
+          const handleTouchStart = (e: TouchEvent) => {
+            isDragging = false;
+            hasStartedDragging = false;
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            currentX = translateX;
+          };
+
+          const handleTouchMove = (e: TouchEvent) => {
+            if (!hasStartedDragging) {
+              const deltaX = Math.abs(e.touches[0].clientX - startX);
+              const deltaY = Math.abs(e.touches[0].clientY - startY);
+
+              // Only start dragging if horizontal movement is greater than vertical and exceeds threshold
+              if (deltaX > dragThreshold && deltaX > deltaY) {
+                hasStartedDragging = true;
+                isDragging = true;
+              } else if (deltaY > dragThreshold) {
+                // If vertical movement is greater, don't start dragging
+                return;
+              } else {
+                // Not enough movement yet
+                return;
+              }
+            }
+
+            if (!isDragging) return;
+            e.preventDefault();
+
+            const deltaX = e.touches[0].clientX - startX;
+            const newTranslateX = currentX + deltaX;
+
+            // Constrain the translation
+            translateX = Math.max(-maxTranslateX, Math.min(0, newTranslateX));
+
+            gsap.set(items, {
+              x: (index) => initialOffset + index * visibleCardWidth + translateX,
+            });
+          };
+
+          const handleTouchEnd = () => {
+            if (!isDragging) {
+              // Reset drag state if no dragging occurred
+              hasStartedDragging = false;
+              return;
+            }
+            isDragging = false;
+            hasStartedDragging = false;
+
+            // Snap to nearest card
+            const targetIndex = Math.round(-translateX / visibleCardWidth);
+            const targetTranslateX = -targetIndex * visibleCardWidth;
+
+            gsap.to(items, {
+              x: (index) => initialOffset + index * visibleCardWidth + targetTranslateX,
+              duration: reduceMotion ? 0 : 0.3,
+              ease: "power2.out",
+              onComplete: () => {
+                translateX = targetTranslateX;
+              }
+            });
+          };
+
+          // Mouse event handlers for desktop testing
+          const handleMouseDown = (e: MouseEvent) => {
+            isDragging = false;
+            hasStartedDragging = false;
+            startX = e.clientX;
+            startY = e.clientY;
+            currentX = translateX;
+            e.preventDefault();
+          };
+
+          const handleMouseMove = (e: MouseEvent) => {
+            if (!hasStartedDragging) {
+              const deltaX = Math.abs(e.clientX - startX);
+              const deltaY = Math.abs(e.clientY - startY);
+
+              // Only start dragging if horizontal movement is greater than vertical and exceeds threshold
+              if (deltaX > dragThreshold && deltaX > deltaY) {
+                hasStartedDragging = true;
+                isDragging = true;
+              } else if (deltaY > dragThreshold) {
+                // If vertical movement is greater, don't start dragging
+                return;
+              } else {
+                // Not enough movement yet
+                return;
+              }
+            }
+
+            if (!isDragging) return;
+            e.preventDefault();
+
+            const deltaX = e.clientX - startX;
+            const newTranslateX = currentX + deltaX;
+
+            translateX = Math.max(-maxTranslateX, Math.min(0, newTranslateX));
+
+            gsap.set(items, {
+              x: (index) => initialOffset + index * visibleCardWidth + translateX,
+            });
+          };
+
+          const handleMouseUp = () => {
+            if (!isDragging) {
+              // Reset drag state if no dragging occurred
+              hasStartedDragging = false;
+              return;
+            }
+            isDragging = false;
+            hasStartedDragging = false;
+
+            const targetIndex = Math.round(-translateX / visibleCardWidth);
+            const targetTranslateX = -targetIndex * visibleCardWidth;
+
+            gsap.to(items, {
+              x: (index) => initialOffset + index * visibleCardWidth + targetTranslateX,
+              duration: reduceMotion ? 0 : 0.3,
+              ease: "power2.out",
+              onComplete: () => {
+                translateX = targetTranslateX;
+              }
+            });
+          };
+
+          // Add event listeners
+          if (containerRef.current) {
+            containerRef.current.addEventListener('touchstart', handleTouchStart, { passive: false });
+            containerRef.current.addEventListener('touchmove', handleTouchMove, { passive: false });
+            containerRef.current.addEventListener('touchend', handleTouchEnd);
+            containerRef.current.addEventListener('mousedown', handleMouseDown);
+            containerRef.current.addEventListener('mousemove', handleMouseMove);
+            containerRef.current.addEventListener('mouseup', handleMouseUp);
+            containerRef.current.addEventListener('mouseleave', handleMouseUp);
           }
+
+          return () => {
+            // Cleanup event listeners
+            if (containerRef.current) {
+              containerRef.current.removeEventListener('touchstart', handleTouchStart);
+              containerRef.current.removeEventListener('touchmove', handleTouchMove);
+              containerRef.current.removeEventListener('touchend', handleTouchEnd);
+              containerRef.current.removeEventListener('mousedown', handleMouseDown);
+              containerRef.current.removeEventListener('mousemove', handleMouseMove);
+              containerRef.current.removeEventListener('mouseup', handleMouseUp);
+              containerRef.current.removeEventListener('mouseleave', handleMouseUp);
+            }
+          };
         }
       }
-    });
+    );
 
     return () => {
-      tl.kill();
+      mm.revert();
     };
   }, []);
 
   // GSAP Animations for initial reveal
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
+      const breakPoint = 1024; // lg breakpoint
+      const mm = gsap.matchMedia();
+
       // Set initial states
       gsap.set(
         [
@@ -103,40 +309,65 @@ function WhatIsTriggerX() {
         }
       );
 
-      // Create timeline for initial reveal
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 80%",
-          end: "top 20%",
-          scrub: 1,
-          preventOverlaps: true,
-          fastScrollEnd: true,
+      mm.add(
+        {
+          isDesktop: `(min-width: ${breakPoint}px)`,
+          isMobile: `(max-width: ${breakPoint - 1}px)`,
+          reduceMotion: "(prefers-reduced-motion: reduce)",
         },
-      });
+        (context) => {
+          const { isMobile, reduceMotion } = context.conditions as {
+            isDesktop: boolean;
+            isMobile: boolean;
+            reduceMotion: boolean;
+          };
 
-      // Animate elements in sequence
-      tl.to(titleRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 0.4,
-        ease: "power2.out",
-      })
-        .to(descriptionRef.current, {
-          opacity: 1,
-          y: 0,
-          duration: 0.4,
-          ease: "power2.out",
-        })
-        .to(containerRef.current, {
-          opacity: 1,
-          y: 0,
-        })
-        .to(buttonRefs.current, {
-          opacity: 1,
-          y: 0,
-          stagger: 0.05,
-        });
+          // Create timeline for initial reveal with responsive triggers
+          const tl = gsap.timeline({
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: isMobile ? "top 90%" : "top 80%", // Start earlier on mobile
+              end: isMobile ? "top 30%" : "top 20%", // End earlier on mobile
+              scrub: reduceMotion ? 0 : 1,
+              preventOverlaps: true,
+              fastScrollEnd: true,
+            },
+          });
+
+          // Animate elements in sequence
+          tl.to(titleRef.current, {
+            opacity: 1,
+            y: 0,
+            duration: reduceMotion ? 0 : 0.4,
+            ease: "power2.out",
+          })
+            .to(descriptionRef.current, {
+              opacity: 1,
+              y: 0,
+              duration: reduceMotion ? 0 : 0.4,
+              ease: "power2.out",
+            })
+            .to(containerRef.current, {
+              opacity: 1,
+              y: 0,
+              duration: reduceMotion ? 0 : 0.3,
+            })
+            .to(buttonRefs.current, {
+              opacity: 1,
+              y: 0,
+              stagger: reduceMotion ? 0 : 0.05,
+              duration: reduceMotion ? 0 : 0.3,
+            });
+
+          return () => {
+            tl.kill();
+          };
+        }
+      );
+
+      return () => {
+        mm.revert();
+      };
     }, sectionRef);
 
     return () => ctx.revert();
@@ -168,13 +399,13 @@ function WhatIsTriggerX() {
   return (
     <section
       ref={sectionRef}
-      className="mx-auto w-[90%] lg:mb-0 max-w-[1600px]"
+      className="mx-auto w-full md:w-[90%] lg:mb-0 max-w-[1600px]"
     >
       {/* Parent Container */}
-      <div className="p-6 sm:p-8 lg:p-12 xl:p-16 2xl:p-20 w-full mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div className="p-0 md:p-6 sm:p-8 lg:p-12 xl:p-16 2xl:p-20 w-full mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 md:gap-12 gap-4 items-center">
           {/* Left Side - Title and Description */}
-          <div className="text-center space-y-12">
+          <div className="p-6 md:p-0 text-center space-y-12">
             <h1
               ref={titleRef}
               className="font-sharpGrotesk text-3xl sm:text-4xl lg:text-[3vw] xl:text-[3vw] 2xl:text-[3vw] text-white mb-8 lg:mb-8"
@@ -226,10 +457,10 @@ function WhatIsTriggerX() {
           </div>
 
           {/* Right Side - Animated Cards Container */}
-          <div className="relative h-[32rem] lg:h-[36rem] xl:h-[38rem] 2xl:h-[42rem] flex items-center justify-center overflow-hidden">
+          <div className="relative h-[32rem] sm:h-[36rem] lg:h-[36rem] xl:h-[38rem] 2xl:h-[42rem] flex items-center justify-center overflow-hidden">
             <div
               ref={containerRef}
-              className="relative w-full h-full flex justify-center items-end"
+              className="relative w-full h-full flex justify-start lg:justify-center items-end lg:items-end cursor-grab active:cursor-grabbing"
             >
               {cardData.map((card: CardData, index: number) => (
                 <div
@@ -237,13 +468,13 @@ function WhatIsTriggerX() {
                   ref={(el) => {
                     if (el) itemsRef.current[index] = el;
                   }}
-                  className="absolute w-72 sm:w-80 lg:w-96 xl:w-[24rem] h-80 sm:h-96 lg:h-[28rem] xl:h-[32rem] 2xl:h-[36rem] bg-[#0F0F0F] border border-[#4D4D4D] rounded-3xl flex flex-col items-center justify-center p-6 sm:p-8 lg:p-10 shadow-lg"
+                  className="absolute w-80 sm:w-96 lg:w-96 xl:w-[24rem] h-[28rem] sm:h-[32rem] lg:h-[28rem] xl:h-[32rem] 2xl:h-[36rem] bg-[#0F0F0F] border border-[#4D4D4D] rounded-3xl flex flex-col items-center justify-center p-8 sm:p-10 lg:p-10 shadow-lg lg:transform-none"
                   style={{
                     transform: `translate(${index * 30}px, ${-index * 30}px)`,
                     zIndex: cardData.length - index,
                   }}
                 >
-                  <div className="w-24 h-24 sm:w-24 sm:h-24 lg:w-[12rem] lg:h-[12rem] mx-auto mb-4 sm:mb-6 rounded-xl flex items-center justify-center shadow-lg">
+                  <div className="w-36 h-36 sm:w-40 sm:h-40 lg:w-[12rem] lg:h-[12rem] mx-auto mb-8 sm:mb-10 rounded-xl flex items-center justify-center shadow-lg">
                     <Image
                       src={card.icon}
                       alt={card.title}
@@ -253,10 +484,10 @@ function WhatIsTriggerX() {
                       className="w-full object-contain"
                     />
                   </div>
-                  <h3 className="font-actayWide text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-white leading-tight text-center mb-3 sm:mb-4">
+                  <h3 className="font-actayWide text-2xl sm:text-3xl lg:text-2xl xl:text-3xl font-bold text-white leading-tight text-center mb-6 sm:mb-8">
                     {card.title}
                   </h3>
-                  <p className="text-[#A2A2A2] font-normal font-actayRegular text-sm sm:text-base lg:text-lg leading-relaxed text-center max-w-xs sm:max-w-sm">
+                  <p className="text-[#A2A2A2] font-normal font-actayRegular text-lg sm:text-xl lg:text-lg leading-relaxed text-center max-w-md sm:max-w-lg">
                     {card.description}
                   </p>
                 </div>
