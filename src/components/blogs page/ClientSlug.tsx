@@ -43,25 +43,33 @@ export default function ClientSlug({ blog }: ClientSlugProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   useEffect(() => {
+    let ticking = false;
+
     const handleScroll = () => {
-      const headings = document.querySelectorAll("h2");
-      let currentActive = "";
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const headings = document.querySelectorAll("h2");
+          let currentActive = "";
 
-      for (let i = 0; i < headings.length; i++) {
-        const rect = headings[i].getBoundingClientRect();
+          for (let i = 0; i < headings.length; i++) {
+            const rect = headings[i].getBoundingClientRect();
 
-        // If heading is above 120px, set it as active
-        if (rect.top <= 500) {
-          currentActive = headings[i].innerText;
-        } else {
-          break; // Stop checking further, as the next heading hasn't reached 120px yet
-        }
+            // If heading is above 120px, set it as active
+            if (rect.top <= 500) {
+              currentActive = headings[i].innerText;
+            } else {
+              break; // Stop checking further, as the next heading hasn't reached 120px yet
+            }
+          }
+
+          setActiveHeading(currentActive);
+          ticking = false;
+        });
+        ticking = true;
       }
-
-      setActiveHeading(currentActive);
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -187,6 +195,8 @@ export default function ClientSlug({ blog }: ClientSlugProps) {
                             width={2500}
                             height={2000}
                             className="rounded-2xl !relative w-full h-auto"
+                            quality={85}
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 60vw"
                           />
                         )}
                       </div>

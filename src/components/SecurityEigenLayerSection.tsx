@@ -1,11 +1,12 @@
 "use client";
 import Image from "next/image";
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useEffect, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import vector from "../app/assets/Vector.svg";
 import security from "../app/assets/security.svg";
 import validation from "../app/assets/validation.svg";
+import { StatisticsData } from "@/types/eigenlayer";
 
 
 // Featured cards data
@@ -33,8 +34,8 @@ const featuredCards = [
   }
 ];
 
-// Statistics data
-const statistics = [
+// Default statistics data (fallback)
+const defaultStatistics = [
   {
     id: 1,
     value: "25,760",
@@ -47,15 +48,88 @@ const statistics = [
   },
   {
     id: 3,
-    value: "668,010.17",
-    label: "TVL"
+    value: "$2.67B",
+    label: "Current TVL (USD)",
+    subtitle: "668,010.17 ETH @ $4,000.00"
   }
 ];
+
+function formatNumber(num: number): string {
+  if (num >= 1000000) {
+    return (num / 1000000).toFixed(1) + 'M';
+  } else if (num >= 1000) {
+    return (num / 1000).toFixed(1) + 'K';
+  }
+  return num.toLocaleString();
+}
+
+function formatUSD(usd: number): string {
+  if (usd >= 1000000000) {
+    return "$" + (usd / 1000000000).toFixed(1) + "B";
+  } else if (usd >= 1000000) {
+    return "$" + (usd / 1000000).toFixed(1) + "M";
+  } else if (usd >= 1000) {
+    return "$" + (usd / 1000).toFixed(1) + "K";
+  }
+  return "$" + usd.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
+function formatTVL(tvl: number): string {
+  return tvl.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
 
 function SecurityEigenLayerSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<HTMLDivElement[]>([]);
   const statsRef = useRef<HTMLDivElement>(null);
+  const [statistics, setStatistics] = useState(defaultStatistics);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch statistics data
+  useEffect(() => {
+    const fetchStatistics = async () => {
+      try {
+        const response = await fetch('/api/statistics');
+        if (response.ok) {
+          const data: StatisticsData = await response.json();
+          console.log(data, "eigenlayer statistics");
+          setStatistics([
+            {
+              id: 1,
+              value: formatNumber(data.totalStakers),
+              label: "Total Stakers"
+            },
+            {
+              id: 2,
+              value: data.totalOperators.toString(),
+              label: "Total Operators"
+            },
+            {
+              id: 3,
+              value: formatUSD(data.tvlUSD),
+              label: "Current TVL (USD)",
+              subtitle: `${formatTVL(data.tvl)} ETH @ $${data.ethPriceUSD.toFixed(2)}`
+            }
+          ]);
+        } else {
+          console.warn('Failed to fetch statistics, using default values');
+        }
+      } catch (error) {
+        console.error('Error fetching statistics:', error);
+        // Keep using default statistics
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchStatistics();
+  }, []);
 
   useLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -66,19 +140,41 @@ function SecurityEigenLayerSection() {
 
       const selector = gsap.utils.selector(sectionEl);
 
-      // Set initial states
-      gsap.set(selector(".se-title-line"), { autoAlpha: 0, y: 20 });
-      gsap.set(selector(".se-desc"), { autoAlpha: 0, y: 20 });
-      gsap.set(cardRefs.current, { autoAlpha: 0, y: 30, scale: 0.8 });
-      gsap.set(statsRef.current, { autoAlpha: 0, y: -20 });
+      // Set initial states with hardware acceleration
+      gsap.set(selector(".se-title-line"), {
+        autoAlpha: 0,
+        y: 20,
+        force3D: true,
+        willChange: "transform, opacity"
+      });
+      gsap.set(selector(".se-desc"), {
+        autoAlpha: 0,
+        y: 20,
+        force3D: true,
+        willChange: "transform, opacity"
+      });
+      gsap.set(cardRefs.current, {
+        autoAlpha: 0,
+        y: 30,
+        scale: 0.8,
+        force3D: true,
+        willChange: "transform, opacity"
+      });
+      gsap.set(statsRef.current, {
+        autoAlpha: 0,
+        y: -20,
+        force3D: true,
+        willChange: "transform, opacity"
+      });
 
-      // Title lines animation
+      // Title lines animation with reduced duration
       gsap.to(selector(".se-title-line"), {
         autoAlpha: 1,
         y: 0,
-        duration: 0.6,
-        ease: "power3.out",
-        stagger: 0.12,
+        duration: 0.5, // Reduced duration
+        ease: "power2.out", // Simpler easing
+        stagger: 0.1, // Reduced stagger
+        force3D: true,
         scrollTrigger: {
           trigger: sectionEl,
           start: "top 70%",
@@ -86,12 +182,13 @@ function SecurityEigenLayerSection() {
         },
       });
 
-      // Description animation
+      // Description animation with reduced duration
       gsap.to(selector(".se-desc"), {
         autoAlpha: 1,
         y: 0,
-        duration: 0.7,
-        ease: "power3.out",
+        duration: 0.5, // Reduced duration
+        ease: "power2.out", // Simpler easing
+        force3D: true,
         scrollTrigger: {
           trigger: sectionEl,
           start: "top 65%",
@@ -99,14 +196,15 @@ function SecurityEigenLayerSection() {
         },
       });
 
-      // Cards animation
+      // Cards animation with reduced duration
       gsap.to(cardRefs.current, {
         autoAlpha: 1,
         y: 0,
         scale: 1,
-        duration: 0.7,
-        ease: "power3.out",
-        stagger: 0.15,
+        duration: 0.5, // Reduced duration
+        ease: "power2.out", // Simpler easing
+        stagger: 0.1, // Reduced stagger
+        force3D: true,
         scrollTrigger: {
           trigger: sectionEl,
           start: "top 60%",
@@ -114,12 +212,13 @@ function SecurityEigenLayerSection() {
         },
       });
 
-      // Stats animation
+      // Stats animation with reduced duration
       gsap.to(statsRef.current, {
         autoAlpha: 1,
         y: 0,
-        duration: 0.7,
-        ease: "power3.out",
+        duration: 0.5, // Reduced duration
+        ease: "power2.out", // Simpler easing
+        force3D: true,
         scrollTrigger: {
           trigger: sectionEl,
           start: "top 55%",
@@ -209,11 +308,20 @@ function SecurityEigenLayerSection() {
           {statistics.map((stat) => (
             <div key={stat.id} className="text-left p-6 lg:p-8">
               <div className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-white mb-2">
-                {stat.value}
+                {isLoading ? (
+                  <div className="animate-pulse bg-gray-700 h-12 w-24 rounded"></div>
+                ) : (
+                  stat.value
+                )}
               </div>
               <div className="text-[#A2A2A2] text-sm lg:text-base xl:text-xl 2xl:text-2xl">
                 {stat.label}
               </div>
+              {/* {stat.subtitle && (
+                <div className="text-[#666666] text-xs lg:text-sm xl:text-base mt-1">
+                  {stat.subtitle}
+                </div>
+              )} */}
             </div>
           ))}
         </div>

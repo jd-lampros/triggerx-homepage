@@ -9,6 +9,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import AnimatedButton from "./ui/AnimatedButton";
 
 
 const Header = () => {
@@ -89,20 +90,24 @@ const Header = () => {
   const handleMouseEnter = (event: React.MouseEvent<HTMLElement>) => {
     const hoveredElement = event.currentTarget;
     if (!hoveredElement) return;
-    const rect = hoveredElement.getBoundingClientRect();
-    const navRect = navRef.current
-      ? navRef.current.getBoundingClientRect()
-      : { x: 0, y: 0, width: 0, height: 0 };
 
-    setHighlightStyle({
-      opacity: 1,
-      width: `${rect.width}px`,
-      height: `${rect.height}px`,
-      transform: `translateX(${rect.x - navRect.x}px)`,
-      transition: prevRect ? "all 0.3s ease" : "none",
+    // Use requestAnimationFrame to avoid forced reflows
+    requestAnimationFrame(() => {
+      const rect = hoveredElement.getBoundingClientRect();
+      const navRect = navRef.current
+        ? navRef.current.getBoundingClientRect()
+        : { x: 0, y: 0, width: 0, height: 0 };
+
+      setHighlightStyle({
+        opacity: 1,
+        width: `${rect.width}px`,
+        height: `${rect.height}px`,
+        transform: `translateX(${rect.x - navRect.x}px)`,
+        transition: prevRect ? "all 0.3s ease" : "none",
+      });
+
+      setPrevRect(rect);
     });
-
-    setPrevRect(rect);
   };
 
   // Handles mouse leaving nav (hide highlight)
@@ -175,59 +180,79 @@ const Header = () => {
 
 
 
-  // Add new useEffect for handling window resize
+  // Optimized resize handler with throttling
   useEffect(() => {
+    let ticking = false;
+
     const handleResize = () => {
-      const isMobileView = window.innerWidth < 1024;
-      setIsMobile(isMobileView);
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const isMobileView = window.innerWidth < 1024;
+          setIsMobile(isMobileView);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
     // Initial check
     handleResize();
 
-    // Add event listener
-    window.addEventListener("resize", handleResize);
+    // Add event listener with passive flag
+    window.addEventListener("resize", handleResize, { passive: true });
 
     // Cleanup
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, [isMobile]);
+  }, []);
 
-  // GSAP animation for header entrance
+  // Optimized GSAP animation for header entrance
   useGSAP(() => {
-    // Preloader total duration is 4.0 seconds
-    // Character animations: 2.8s (last character finishes)
-    // Characters move up: 1s (starts at 2.8s, ends at 3.8s)
-    // SVG curve: 0.4s (starts at 3.2s, ends at 3.6s)
-    // SVG flat: 0.4s (starts at 3.6s, ends at 4.0s)
     const PRELOADER_DURATION = 4.0; // seconds
 
-    // Function to animate header
+    // Function to animate header with reduced complexity
     const animateHeader = () => {
       if (!headerRef.current || !logoRef.current) return;
 
-      // Set initial positions
-      gsap.set(headerRef.current, { y: -200, opacity: 0 });
-      gsap.set(logoRef.current, { y: -100, opacity: 0 });
+      // Use transform3d for hardware acceleration
+      gsap.set(headerRef.current, {
+        y: -200,
+        opacity: 0,
+        force3D: true,
+        willChange: "transform, opacity"
+      });
+      gsap.set(logoRef.current, {
+        y: -100,
+        opacity: 0,
+        force3D: true,
+        willChange: "transform, opacity"
+      });
 
-      // Create timeline for header animations
-      const tl = gsap.timeline();
+      // Simplified timeline with fewer properties
+      const tl = gsap.timeline({
+        onComplete: () => {
+          // Clean up willChange after animation
+          gsap.set([headerRef.current, logoRef.current], { willChange: "auto" });
+        }
+      });
 
-      // Animate header sliding down from top
+      // Animate header with hardware acceleration
       tl.to(headerRef.current, {
-        duration: 0.8,
+        duration: 0.6, // Reduced duration
         y: 0,
         opacity: 1,
         ease: "power2.out",
+        force3D: true
       })
-        // Then animate logo with a slight delay
+        // Animate logo with reduced delay
         .to(logoRef.current, {
-          duration: 0.6,
+          duration: 0.4, // Reduced duration
           y: 0,
           opacity: 1,
           ease: "power2.out",
-        }, "-=0.3");
+          force3D: true
+        }, "-=0.2"); // Reduced delay
 
       setAnimationCompleted(true);
     };
@@ -235,7 +260,7 @@ const Header = () => {
     // Start header animation after preloader completes
     const timer = setTimeout(() => {
       animateHeader();
-    }, PRELOADER_DURATION * 1000); // Convert to milliseconds
+    }, PRELOADER_DURATION * 1000);
 
     // Cleanup timer on unmount
     return () => {
@@ -253,7 +278,14 @@ const Header = () => {
 
         <div className="absolute top-0 left-1/2 transform -translate-x-1/2 2xl:w-[30vw] lg:w-[32vw] md:w-[30vw] w-[35vw] h-full">
           <div className="relative w-full h-full 2xl:translate-y-[-180%] lg:translate-y-[-152%] translate-y-[-130%]">
-            <Image src={crystal} alt="TriggerX Logo" className="w-full" />
+            <Image
+              src={crystal}
+              alt="TriggerX Logo"
+
+              priority
+              quality={80}
+              sizes="(max-width: 768px) 35vw, (max-width: 1024px) 30vw, (max-width: 1536px) 32vw, 30vw"
+            />
           </div>
         </div>
 
@@ -406,7 +438,7 @@ const Header = () => {
                   <Link href="https://app.triggerx.network" target="_blank">
                     <button className="relative bg-[#222222] text-[#000000] border border-[#222222] px-6 py-2 sm:px-8 sm:py-3  lg:px-6 xl:px-8 rounded-full group transition-transform">
                       <span className="absolute inset-0 bg-[#222222] border border-[#FFFFFF80]/50 rounded-full scale-100 translate-y-0 transition-all duration-300 ease-out group-hover:translate-y-2"></span>
-                      <span className="absolute inset-0 bg-[#F8FF7C] rounded-full scale-100 translate-y-0 group-hover:translate-y-0"></span>
+                      <span className="absolute inset-0 bg-[#fff837] rounded-full scale-100 translate-y-0 group-hover:translate-y-0"></span>
                       <span className="font-actayRegular relative z-10 px-0 py-3 sm:px-3 md:px-6 lg:px-0 rounded-full translate-y-2 group-hover:translate-y-0 transition-all duration-300 ease-out text-xs sm:text-base">
                         Start Building
                       </span>
@@ -584,18 +616,15 @@ const Header = () => {
                           ))}
                         </div>
                         <div className="mt-8 px-4">
-                          <Link
+                          <AnimatedButton
                             href="https://app.triggerx.network/"
-                            target="_blank"
+
+                            variant="yellow_outline"
+                            flairColor="#fff837"
+                            className="w-50  md:px-6 md:py-3 md:text-lg px-5 py-2.5 text-base"
                           >
-                            <button className="relative bg-[#222222] text-[#000000] border border-[#222222] px-8 py-4 rounded-full group transition-transform w-full">
-                              <span className="absolute inset-0 bg-[#222222] border border-[#FFFFFF80]/50 rounded-full scale-100 translate-y-0 transition-all duration-300 ease-out group-hover:translate-y-2"></span>
-                              <span className="absolute inset-0 bg-[#F8FF7C] rounded-full scale-100 translate-y-0 group-hover:translate-y-0"></span>
-                              <span className="font-actayRegular relative z-10 px-4 py-2 rounded-full translate-y-2 group-hover:translate-y-0 transition-all duration-300 ease-out text-base">
-                                Start Building
-                              </span>
-                            </button>
-                          </Link>
+                            <button className="text-[#fff837]">Start Building</button>
+                          </AnimatedButton>
                         </div>
                       </nav>
                     </div>

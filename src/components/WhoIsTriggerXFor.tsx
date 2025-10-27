@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef } from "react";
+import React, { useRef } from "react";
 import Image from "next/image";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -8,6 +8,7 @@ import security from "../app/assets/security.svg";
 import validation from "../app/assets/validation.svg";
 import MarqueePills from "./MarqueePills";
 import { useCasesData } from "../data/useCasesData";
+import { useGSAP } from "@gsap/react";
 
 // Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger);
@@ -29,9 +30,9 @@ function WhoIsTriggerXFor() {
   };
 
   // GSAP Animations
-  useLayoutEffect(() => {
+  useGSAP(() => {
     const ctx = gsap.context(() => {
-      // Set initial states
+      // Set initial states with hardware acceleration
       gsap.set(
         [
           imageRef.current,
@@ -42,6 +43,8 @@ function WhoIsTriggerXFor() {
         {
           opacity: 0,
           y: 50,
+          force3D: true,
+          willChange: "transform, opacity"
         }
       );
 
@@ -58,59 +61,72 @@ function WhoIsTriggerXFor() {
         },
       });
 
-      // Animate elements in sequence
+      // Animate elements in sequence with reduced durations
       tl.to(imageRef.current, {
         opacity: 1,
         y: 0,
-        duration: 0.8,
+        duration: 0.5, // Reduced duration
         ease: "power2.out",
+        force3D: true
       })
         .to(
           titleRef.current,
           {
             opacity: 1,
             y: 0,
-            duration: 0.8,
+            duration: 0.5, // Reduced duration
             ease: "power2.out",
+            force3D: true
           },
-          "-=0.4"
+          "-=0.3" // Reduced delay
         )
         .to(
           subtitleRef.current,
           {
             opacity: 1,
             y: 0,
-            duration: 0.4,
+            duration: 0.3, // Reduced duration
             ease: "power2.out",
+            force3D: true
           },
-          "-=0.4"
+          "-=0.3" // Reduced delay
         )
         .to(
           descriptionRef.current,
           {
             opacity: 1,
             y: 0,
-            duration: 0.8,
+            duration: 0.5, // Reduced duration
             ease: "power2.out",
+            force3D: true
           },
-          "-=0.4"
+          "-=0.3" // Reduced delay
         );
 
-      // Add subtle hover animation to image
+      // Add optimized hover animation to image
       if (imageRef.current) {
         gsap.to(imageRef.current, {
           scale: 1.05,
-          duration: 0.3,
+          duration: 0.2, // Reduced duration
           ease: "power2.out",
           paused: true,
+          force3D: true
         });
 
         (imageRef.current as HTMLElement).addEventListener("mouseenter", () => {
-          gsap.to(imageRef.current, { scale: 1.05, duration: 0.3 });
+          gsap.to(imageRef.current, {
+            scale: 1.05,
+            duration: 0.2, // Reduced duration
+            force3D: true
+          });
         });
 
         (imageRef.current as HTMLElement).addEventListener("mouseleave", () => {
-          gsap.to(imageRef.current, { scale: 1, duration: 0.3 });
+          gsap.to(imageRef.current, {
+            scale: 1,
+            duration: 0.2, // Reduced duration
+            force3D: true
+          });
         });
       }
     }, sectionRef);
@@ -158,8 +174,9 @@ function WhoIsTriggerXFor() {
             alt="Who is TriggerX For"
             width={500}
             height={500}
-            quality={100}
+            quality={85}
             className="w-64 object-contain"
+            sizes="256px"
           />
         </div>
 
@@ -184,7 +201,7 @@ function WhoIsTriggerXFor() {
         {/* Use Cases Subtitle */}
         <h2
           ref={subtitleRef}
-          className="text-[#F8FF7C] text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-actayWide font-bold mb-8 lg:mb-12 disable-grid-effect"
+          className="text-[#fff837] text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-actayWide font-bold mb-8 lg:mb-12 disable-grid-effect"
         >
           Use cases include
         </h2>

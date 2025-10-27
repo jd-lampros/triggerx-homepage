@@ -58,35 +58,38 @@ const MarqueeWords = ({ words, className = "", speed = 1 }: MarqueeWordsProps) =
 
                 const tl = gsap.timeline({ repeat: -1 });
 
-                // Get the width of one set of content
-                const singleSetWidth = lineContent.scrollWidth / 3;
+                // Use requestAnimationFrame to avoid forced reflow after DOM manipulation
+                requestAnimationFrame(() => {
+                    // Get the width of one set of content
+                    const singleSetWidth = lineContent.scrollWidth / 3;
 
-                // Alternate direction for each line
-                const isEvenIndex = index % 2 === 0;
+                    // Alternate direction for each line
+                    const isEvenIndex = index % 2 === 0;
 
-                if (isEvenIndex) {
-                    // Even lines (0, 2, 4...) move right to left
-                    tl.fromTo(lineContent,
-                        { x: 0 },
-                        {
-                            x: -singleSetWidth,
-                            duration: singleSetWidth / (speed * 50),
-                            ease: "none"
-                        }
-                    );
-                } else {
-                    // Odd lines (1, 3, 5...) move left to right
-                    tl.fromTo(lineContent,
-                        { x: -singleSetWidth },
-                        {
-                            x: 0,
-                            duration: singleSetWidth / (speed * 50),
-                            ease: "none"
-                        }
-                    );
-                }
+                    if (isEvenIndex) {
+                        // Even lines (0, 2, 4...) move right to left
+                        tl.fromTo(lineContent,
+                            { x: 0 },
+                            {
+                                x: -singleSetWidth,
+                                duration: singleSetWidth / (speed * 50),
+                                ease: "none"
+                            }
+                        );
+                    } else {
+                        // Odd lines (1, 3, 5...) move left to right
+                        tl.fromTo(lineContent,
+                            { x: -singleSetWidth },
+                            {
+                                x: 0,
+                                duration: singleSetWidth / (speed * 50),
+                                ease: "none"
+                            }
+                        );
+                    }
 
-                timelineRef.current = tl;
+                    timelineRef.current = tl;
+                });
             }
         });
     };
@@ -100,7 +103,7 @@ const MarqueeWords = ({ words, className = "", speed = 1 }: MarqueeWordsProps) =
                         <div className="flex items-center whitespace-nowrap">
                             {/* Render word multiple times with hyphens */}
                             {[1, 2, 3, 4, 5].map((repeat) => (
-                                <div key={repeat} className="flex items-center my-2">
+                                <div key={repeat} className="flex items-center my-1">
                                     <span className="text-white font-sharpGrotesk text-[7vh] sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-9xl leading-[100%] tracking-[-0.06em] whitespace-nowrap">
                                         {word}
                                     </span>

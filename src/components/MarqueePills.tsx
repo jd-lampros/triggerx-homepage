@@ -158,7 +158,18 @@ function horizontalLoop(items: Element[], config?: HorizontalLoopConfig): gsap.c
   });
 
   const length: number = items.length;
-  const startX: number = (items[0] as HTMLElement).offsetLeft;
+
+  // Cache geometric properties to avoid forced reflows
+  const cachedOffsets: number[] = [];
+  const cachedWidths: number[] = [];
+
+  for (let i = 0; i < length; i++) {
+    const element = items[i] as HTMLElement;
+    cachedOffsets[i] = element.offsetLeft;
+    cachedWidths[i] = element.offsetWidth;
+  }
+
+  const startX: number = cachedOffsets[0];
   const times: number[] = [];
   const widths: number[] = [];
   const xPercents: number[] = [];
@@ -184,17 +195,17 @@ function horizontalLoop(items: Element[], config?: HorizontalLoopConfig): gsap.c
 
   gsap.set(items, { x: 0 });
   const totalWidth: number =
-    (items[length - 1] as HTMLElement).offsetLeft +
+    cachedOffsets[length - 1] +
     (xPercents[length - 1] / 100) * widths[length - 1] -
     startX +
-    (items[length - 1] as HTMLElement).offsetWidth *
+    cachedWidths[length - 1] *
     (gsap.getProperty(items[length - 1], "scaleX") as number) +
     (parseFloat(config.paddingRight?.toString() || "0"));
 
   for (i = 0; i < length; i++) {
     item = items[i];
     curX = (xPercents[i] / 100) * widths[i];
-    distanceToStart = (item as HTMLElement).offsetLeft + curX - startX;
+    distanceToStart = cachedOffsets[i] + curX - startX;
     distanceToLoop =
       distanceToStart + widths[i] * (gsap.getProperty(item, "scaleX") as number);
     tl.to(

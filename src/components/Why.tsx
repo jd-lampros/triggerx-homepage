@@ -46,23 +46,31 @@ export default function Why({
   const wrappedItems = [...Boxdata, ...Boxdata, ...Boxdata];
   const totalItems = Boxdata.length;
 
-  // Update screen width and item width on mount and resize
+  // Update screen width and item width on mount and resize with throttling
   useEffect(() => {
-    const updateDimensions = (): void => {
-      const width: number = window.innerWidth;
-      setIsMobile(width < 640);
+    let ticking = false;
 
-      if (width < 640) {
-        setItemWidth(width - 32);
-      } else if (width < 1024) {
-        setItemWidth(350);
-      } else {
-        setItemWidth(350);
+    const updateDimensions = (): void => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const width: number = window.innerWidth;
+          setIsMobile(width < 640);
+
+          if (width < 640) {
+            setItemWidth(width - 32);
+          } else if (width < 1024) {
+            setItemWidth(350);
+          } else {
+            setItemWidth(350);
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
     updateDimensions();
-    window.addEventListener("resize", updateDimensions);
+    window.addEventListener("resize", updateDimensions, { passive: true });
     return () => window.removeEventListener("resize", updateDimensions);
   }, []);
 
@@ -188,7 +196,7 @@ export default function Why({
             Why TriggerX?
           </h2>
           <div className="hidden lg:block h-auto w-full max-w-[300px]">
-            <Image src={why} alt="Why TriggerX" className="w-full h-auto" />
+            <Image src={why} alt="Why TriggerX" className="w-full h-auto" sizes="300px" />
           </div>
         </div>
 

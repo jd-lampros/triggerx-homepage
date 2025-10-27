@@ -48,7 +48,7 @@ export default function AnimatedButton({
         // Create the circular background element
         const flairCircle = document.createElement("div");
         flairCircle.style.aspectRatio = "1/1";
-        flairCircle.style.backgroundColor = flairColor === "white" ? "#ffffff" : flairColor === "#f8ff7c" ? "#f8ff7c" : "#000000";
+        flairCircle.style.backgroundColor = flairColor === "white" ? "#ffffff" : flairColor === "#fff837" ? "#fff837" : "#000000";
         flairCircle.style.borderRadius = "50%";
         flairCircle.style.content = "";
         flairCircle.style.display = "block";
@@ -122,7 +122,7 @@ export default function AnimatedButton({
             });
 
             gsap.to(buttonElement, {
-                color: flairColor === "white" ? "#000000" : flairColor === "#f8ff7c" ? "black" : flairColor,
+                color: flairColor === "white" ? "#000000" : flairColor === "#fff837" ? "black" : flairColor,
                 duration: 0.05,
                 ease: "power2.out",
             });
@@ -130,7 +130,7 @@ export default function AnimatedButton({
             // Also animate the Button component text color
             if (buttonComponent) {
                 gsap.to(buttonComponent, {
-                    color: flairColor === "white" ? "#000000" : flairColor === "#f8ff7c" ? "black" : flairColor,
+                    color: flairColor === "white" ? "#000000" : flairColor === "#fff837" ? "black" : flairColor,
                     duration: 0.05,
                     ease: "power2.out",
                 });
@@ -152,7 +152,7 @@ export default function AnimatedButton({
             });
 
             gsap.to(buttonElement, {
-                color: flairColor === "white" ? "#ffffff" : flairColor === "#f8ff7c" ? "#f8ff7c" : flairColor,
+                color: flairColor === "white" ? "#ffffff" : flairColor === "#fff837" ? "#fff837" : flairColor,
                 duration: 0.15,
                 ease: "power2.out",
             });
@@ -160,7 +160,7 @@ export default function AnimatedButton({
             // Also reset the Button component text color
             if (buttonComponent) {
                 gsap.to(buttonComponent, {
-                    color: flairColor === "white" ? "#ffffff" : flairColor === "#f8ff7c" ? "#f8ff7c" : flairColor,
+                    color: flairColor === "white" ? "#ffffff" : flairColor === "#fff837" ? "#fff837" : flairColor,
                     duration: 0.15,
                     ease: "power2.out",
                 });
@@ -211,7 +211,7 @@ export default function AnimatedButton({
         case "white_outline":
             return "bg-transparent text-white border-[#ffffff]";
         case "yellow_outline":
-            return "bg-transparent text-[#f8ff7c] border-[#f8ff7c]";
+            return "bg-transparent text-[#fff837] border-[#fff837]";
         default:
             return "bg-[#fff282] text-black border-[#fff282]";
         }
@@ -252,11 +252,14 @@ export default function AnimatedButton({
                         e.preventDefault();
                         const targetElement = document.querySelector(href);
                         if (targetElement) {
-                            const elementPosition =
-                                (targetElement as HTMLElement).offsetTop - 50;
-                            window.scrollTo({
-                                top: elementPosition,
-                                behavior: "smooth",
+                            // Use requestAnimationFrame to avoid forced reflow
+                            requestAnimationFrame(() => {
+                                const elementPosition =
+                                    (targetElement as HTMLElement).offsetTop - 50;
+                                window.scrollTo({
+                                    top: elementPosition,
+                                    behavior: "smooth",
+                                });
                             });
                         }
                     }

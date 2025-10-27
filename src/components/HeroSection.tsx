@@ -159,54 +159,65 @@ function HeroSection() {
   //   return () => window.removeEventListener("scroll", handleVisibility);
   // }, []);
 
-  // GSAP animation for hero section entrance
+  // Optimized GSAP animation for hero section entrance
   useGSAP(() => {
-    // Preloader total duration is 4.0 seconds
     const PRELOADER_DURATION = 4.0; // seconds
 
-    // Function to animate hero content
+    // Function to animate hero content with reduced complexity
     const animateHeroContent = () => {
       if (!poweredByRef.current || !buttonsRef.current) return;
 
-      // Set initial positions (below viewport)
+      // Use hardware acceleration for better performance
       gsap.set([poweredByRef.current, buttonsRef.current], {
         y: 80,
-        opacity: 0
+        opacity: 0,
+        force3D: true,
+        willChange: "transform, opacity"
       });
 
-      // Create timeline for hero animations
-      const tl = gsap.timeline();
+      // Create optimized timeline
+      const tl = gsap.timeline({
+        onComplete: () => {
+          // Clean up willChange after animation
+          gsap.set([poweredByRef.current, buttonsRef.current], { willChange: "auto" });
+        }
+      });
 
-      // Animate title section (desktop only)
+      // Animate title section (desktop only) with reduced complexity
       if (titleLine1Ref.current && titleLine2Ref.current && titleLine3Ref.current) {
         gsap.set([titleLine1Ref.current, titleLine2Ref.current, titleLine3Ref.current], {
           y: 100,
-          opacity: 0
+          opacity: 0,
+          force3D: true,
+          willChange: "transform, opacity"
         });
 
         tl.to([titleLine1Ref.current, titleLine2Ref.current, titleLine3Ref.current], {
-          duration: 0.8,
+          duration: 0.6, // Reduced duration
           y: 0,
           opacity: 1,
           ease: "power2.out",
-          stagger: 0.2, // 0.2s delay between each line
+          stagger: 0.15, // Reduced stagger
+          force3D: true
         });
       }
 
-      // Then animate powered by section
+      // Then animate powered by section with reduced duration
       tl.to(poweredByRef.current, {
-        duration: 0.6,
+        duration: 0.4, // Reduced duration
         y: 0,
         opacity: 1,
         ease: "power2.out",
-      }, "-=0.4") // Start 0.4s before previous animation ends
+        force3D: true
+      }, "-=0.3") // Reduced delay
         // Finally animate buttons
         .to(buttonsRef.current, {
-          duration: 0.6,
+          duration: 0.4, // Reduced duration
           y: 0,
           opacity: 1,
           ease: "power2.out",
-        }, "-=0.2"); // Start 0.2s before previous animation ends
+          force3D: true
+        }, "-=0.15"); // Reduced delay
 
       setAnimationCompleted(true);
     };
@@ -214,7 +225,7 @@ function HeroSection() {
     // Start hero animation after preloader completes
     const timer = setTimeout(() => {
       animateHeroContent();
-    }, PRELOADER_DURATION * 1000); // Convert to milliseconds
+    }, PRELOADER_DURATION * 1000);
 
     // Cleanup timer on unmount
     return () => {
@@ -259,7 +270,7 @@ function HeroSection() {
               {/* Mobile Marquee Words */}
               <div className="lg:hidden">
                 <MarqueeWords
-                  words={["Effortless", "Blockchain", "Automation", "Limitless", "Potential"]}
+                  words={["EFFORTLESS", "BLOCKCHAIN", "AUTOMATION", "LIMITLESS", "POTENTIAL"]}
                   speed={0.5}
                   className="mb-8"
                 />
@@ -288,10 +299,10 @@ function HeroSection() {
                 href="https://app.triggerx.network/"
 
                 variant="yellow_outline"
-                flairColor="#f8ff7c"
+                flairColor="#fff837"
                 className="w-50  md:px-6 md:py-3 md:text-lg px-5 py-2.5 text-base"
               >
-                <button className="text-[#f8ff7c]">Start Building</button>
+                <button className="text-[#fff837]">Start Building</button>
               </AnimatedButton>
               {/* <Link href="https://app.triggerx.network/" target="blank">
                 <button className="relative bg-[#222222] text-[#000000] border border-[#222222] px-6 py-2 sm:px-8 sm:py-3 rounded-full group transition-transform">

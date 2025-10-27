@@ -1,4 +1,4 @@
-import React, { useRef, useLayoutEffect } from "react";
+import React, { useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image, { StaticImageData } from "next/image";
@@ -7,6 +7,7 @@ import icon2 from "../app/assets/2.png";
 import icon3 from "../app/assets/3.png";
 import icon4 from "../app/assets/4.png";
 import AnimatedButton from "./ui/AnimatedButton";
+import { useGSAP } from "@gsap/react";
 
 // Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger);
@@ -26,7 +27,7 @@ function WhatIsTriggerX() {
   const descriptionRef = useRef<HTMLParagraphElement>(null);
   const buttonRefs = useRef<HTMLDivElement[]>([]);
 
-  useLayoutEffect(() => {
+  useGSAP(() => {
     if (!containerRef.current || itemsRef.current.length === 0) return;
 
     const items = itemsRef.current;
@@ -59,14 +60,14 @@ function WhatIsTriggerX() {
         };
 
         if (isDesktop) {
-          // Desktop: Original scroll-based animation with diagonal stacking
+          // Desktop: Optimized scroll-based animation with reduced complexity
           const tl = gsap.timeline({
             scrollTrigger: {
               trigger: sectionRef.current,
               start: "top top",
               end: "bottom top",
               pin: true,
-              scrub: reduceMotion ? 0 : 1,
+              scrub: reduceMotion ? 0 : 0.5, // Reduced scrub for better performance
               anticipatePin: 1,
               fastScrollEnd: true,
               preventOverlaps: true,
@@ -76,23 +77,28 @@ function WhatIsTriggerX() {
                 const progress = self.progress;
                 const currentCardIndex = Math.floor(progress * totalItems);
 
-                // Update positions for all cards in the diagonal stack
+                // Optimized position updates with hardware acceleration
                 for (let i = 0; i < totalItems; i++) {
                   const itemIndex = (currentCardIndex + i) % totalItems;
                   const item = items[itemIndex];
 
                   if (item) {
-                    // Set z-index immediately to prevent layering issues
-                    gsap.set(item, { zIndex: totalItems - i });
+                    // Use transform3d for hardware acceleration
+                    gsap.set(item, {
+                      zIndex: totalItems - i,
+                      force3D: true,
+                      willChange: "transform"
+                    });
 
-                    // Then animate position and other properties
+                    // Simplified animation with fewer properties
                     gsap.to(item, {
                       x: offset * i,
                       y: -offset * i,
                       scale: 1,
                       opacity: 1,
-                      duration: reduceMotion ? 0 : 0.3,
+                      duration: reduceMotion ? 0 : 0.2, // Reduced duration
                       ease: "power2.out",
+                      force3D: true
                     });
                   }
                 }
@@ -106,7 +112,7 @@ function WhatIsTriggerX() {
         } else if (isMobile) {
           // Mobile: Manual touch/swipe slider
           const cardWidth = 330; // Card width on mobile (w-80 = 20rem = 320px) - increased for full-width container
-          const containerWidth = containerRef.current?.offsetWidth || 400;
+          const containerWidth = 400;
           const cardSpacing = 12; // Space between cards
 
           let isDragging = false;
@@ -168,6 +174,7 @@ function WhatIsTriggerX() {
 
             gsap.set(items, {
               x: (index) => initialOffset + index * visibleCardWidth + translateX,
+              force3D: true
             });
           };
 
@@ -186,8 +193,9 @@ function WhatIsTriggerX() {
 
             gsap.to(items, {
               x: (index) => initialOffset + index * visibleCardWidth + targetTranslateX,
-              duration: reduceMotion ? 0 : 0.3,
+              duration: reduceMotion ? 0 : 0.2, // Reduced duration
               ease: "power2.out",
+              force3D: true,
               onComplete: () => {
                 translateX = targetTranslateX;
               }
@@ -249,8 +257,9 @@ function WhatIsTriggerX() {
 
             gsap.to(items, {
               x: (index) => initialOffset + index * visibleCardWidth + targetTranslateX,
-              duration: reduceMotion ? 0 : 0.3,
+              duration: reduceMotion ? 0 : 0.2, // Reduced duration
               ease: "power2.out",
+              force3D: true,
               onComplete: () => {
                 translateX = targetTranslateX;
               }
@@ -290,7 +299,7 @@ function WhatIsTriggerX() {
   }, []);
 
   // GSAP Animations for initial reveal
-  useLayoutEffect(() => {
+  useGSAP(() => {
     const ctx = gsap.context(() => {
       const breakPoint = 1024; // lg breakpoint
       const mm = gsap.matchMedia();
@@ -430,11 +439,11 @@ function WhatIsTriggerX() {
                 <AnimatedButton
                   href="https://app.triggerx.network/"
                   variant="yellow_outline"
-                  flairColor="#f8ff7c"
+                  flairColor="#fff837"
                   className="w-50  md:px-6 md:py-3 md:text-lg px-5 py-2.5 text-base"
 
                 >
-                  <button className="text-[#f8ff7c]">Start Building</button>
+                  <button className="text-[#fff837]">Start Building</button>
                 </AnimatedButton>
               </div>
 
@@ -480,8 +489,9 @@ function WhatIsTriggerX() {
                       alt={card.title}
                       width={700}
                       height={700}
-                      quality={100}
+                      quality={85}
                       className="w-full object-contain"
+                      sizes="(max-width: 640px) 144px, (max-width: 1024px) 160px, 192px"
                     />
                   </div>
                   <h3 className="font-actayWide text-2xl sm:text-3xl lg:text-2xl xl:text-3xl font-bold text-white leading-tight text-center mb-6 sm:mb-8">

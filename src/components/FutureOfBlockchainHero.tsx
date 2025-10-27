@@ -1,7 +1,6 @@
 "use client";
 import Image from "next/image";
-import Link from "next/link";
-import { useLayoutEffect, useRef } from "react";
+import { useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import getStarted from "@/app/assets/get_started.png";
@@ -16,7 +15,7 @@ function FutureOfBlockchainHero() {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const buttonRef = useRef<HTMLDivElement>(null);
 
-  useLayoutEffect(() => {
+  useGSAP(() => {
     const container = containerRef.current;
     const image = imageRef.current;
     const title = titleRef.current;
@@ -24,42 +23,50 @@ function FutureOfBlockchainHero() {
 
     if (!container || !image || !title || !button) return;
 
-    // Set initial states
+    // Set initial states with hardware acceleration
     gsap.set([image, title, button], {
       opacity: 0,
       y: 50,
+      force3D: true,
+      willChange: "transform, opacity"
     });
 
     gsap.set(image, {
       scale: 0.8,
+      force3D: true,
+      willChange: "transform"
     });
 
-    // Create timeline
+    // Create optimized timeline
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: container,
         start: "top 90%",
         end: "bottom 80%",
-        scrub: 1,
+        scrub: 0.5, // Reduced scrub for better performance
         toggleActions: "play none none reverse",
       },
     });
+
     tl.to(container, {
       width: "90%",
       borderRadius: 32,
       scale: 1,
       opacity: 1,
       borderColor: "rgba(53, 53, 53, 1)",
+      force3D: true
     });
-    // Animate elements in sequence
+
+    // Animate elements in sequence with reduced durations
     tl.to(
       image,
       {
         opacity: 1,
         y: 0,
         scale: 1,
-        duration: 0.8,
-        ease: "back.out(1.7)",
+        duration: 0.6, // Reduced duration
+        ease: "power2.out", // Simpler easing
+        force3D: true
       },
       "-=0.3"
     )
@@ -68,8 +75,9 @@ function FutureOfBlockchainHero() {
         {
           opacity: 1,
           y: 0,
-          duration: 0.8,
-          ease: "power2.out",
+          duration: 0.6, // Reduced duration
+          ease: "power2.out", // Simpler easing
+          force3D: true
         },
         "-=0.4"
       )
@@ -78,8 +86,9 @@ function FutureOfBlockchainHero() {
         {
           opacity: 1,
           y: 0,
-          duration: 0.6,
-          ease: "power2.out",
+          duration: 0.4, // Reduced duration
+          ease: "power2.out", // Simpler easing
+          force3D: true
         },
         "-=0.3"
       );
@@ -104,14 +113,7 @@ function FutureOfBlockchainHero() {
       });
     }
 
-    return () => {
-      ScrollTrigger.getAll().forEach((trigger) => {
-        if (trigger.trigger === container) {
-          trigger.kill();
-        }
-      });
-    };
-  }, []);
+  }, { scope: containerRef });
 
   return (
     <section className="w-full my-20">

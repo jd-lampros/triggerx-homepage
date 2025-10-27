@@ -1,7 +1,8 @@
 "use client";
-import { useRef, useLayoutEffect } from "react";
+import { useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger, SplitText } from "gsap/all";
+import { useGSAP } from "@gsap/react";
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
@@ -9,17 +10,20 @@ const TextRevealSection = () => {
   const textSectionRef = useRef<HTMLDivElement>(null);
   const textWrapperRef = useRef<HTMLDivElement>(null);
 
-  useLayoutEffect(() => {
+  useGSAP(() => {
     if (!textWrapperRef.current || !textSectionRef.current) return;
 
     const split = SplitText.create(".wrapper p", { type: "words, chars" });
+
+    // Cache window height to avoid forced reflow
+    const windowHeight = window.innerHeight;
 
     const tl: GSAPTimeline = gsap.timeline({
       scrollTrigger: {
         trigger: textSectionRef.current,
         start: "top bottom",
-        end: () => `bottom ${Math.max(50, window.innerHeight * 0.5)}px`,
-        scrub: 1,
+        end: `bottom ${Math.max(50, windowHeight * 0.5)}px`,
+        scrub: 0.5, // Reduced scrub for better performance
         preventOverlaps: true,
         fastScrollEnd: true,
       },
@@ -29,13 +33,16 @@ const TextRevealSection = () => {
       split.chars,
       {
         opacity: 0.1,
-        stagger: 0.1,
+        stagger: 0.05, // Reduced stagger
         scale: 0,
+        force3D: true,
+        willChange: "transform, opacity"
       },
       {
         opacity: 1,
-        stagger: 0.1,
+        stagger: 0.05, // Reduced stagger
         scale: 1,
+        force3D: true
       },
       "+=0.1"
     );
@@ -75,17 +82,20 @@ const TextRevealSection = () => {
         // y: initialY,
         opacity: 0,
         scale: 1,
+        force3D: true,
+        willChange: "transform, opacity"
       });
     });
 
-    // Animate each path to its final position with stagger
+    // Animate each path to its final position with reduced stagger
     tl.to(logoPaths, {
       x: 0,
       y: 0,
       opacity: 1,
-      stagger: 0.2,
-      duration: 1.2,
-      ease: "power2.out",
+      stagger: 0.1, // Reduced stagger
+      duration: 0.8, // Reduced duration
+      ease: "power2.out", // Simpler easing
+      force3D: true
     });
 
     return () => {

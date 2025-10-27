@@ -3,16 +3,17 @@
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 
-// Configuration constants
-const TARGET_CELL_PX = 35;
-const GAP_PX = 3;
+// Optimized configuration constants for better performance
+const TARGET_CELL_PX = 35; // Increased for fewer cells
+const GAP_PX = 3; // Increased gap
 const BASE_COLOR = new THREE.Color('#000000');
 const HI_COLOR = new THREE.Color('#ececec');
 const GRADIENT_COLOR_1 = new THREE.Color('#FFF837');
-const GRADIENT_COLOR_2 = new THREE.Color('#29EC70');// Cool accent color
-const DECAY = 0.75;
-const MAX_INTENSITY = 1.5;
-const MOUSE_THROTTLE = 4; // Minimal mouse throttling for maximum responsiveness
+const GRADIENT_COLOR_2 = new THREE.Color('#29EC70');
+const DECAY = 0.8; // Faster decay for better performance
+const MAX_INTENSITY = 1.2; // Reduced intensity
+const MOUSE_THROTTLE = 8; // Increased throttling for better performance
+const MAX_FPS = 30; // Cap FPS for better performance
 
 export default function GridBackground() {
   const [isClient, setIsClient] = useState(false);
@@ -98,11 +99,11 @@ export default function GridBackground() {
       raycasterRef.current = raycaster;
       mouseRef.current = mouse;
 
-      // Optimized mouse move handler with dirty flagging
+      // Optimized mouse move handler with increased throttling
       const onMouseMove = (e: MouseEvent) => {
         const now = performance.now();
 
-        // Reduced throttling for more responsive mouse tracking
+        // Increased throttling for better performance
         if (now - performanceState.current.lastUpdateTime < MOUSE_THROTTLE) return;
         performanceState.current.lastUpdateTime = now;
 
@@ -257,10 +258,23 @@ export default function GridBackground() {
         }
       };
 
-      // Responsive animation function
-      const animate = () => {
+      // Optimized animation function with FPS limiting and reduced complexity
+      let lastTime = 0;
+      const frameInterval = 1000 / MAX_FPS; // Calculate frame interval
+
+      const animate = (currentTime: number) => {
+        // FPS limiting for better performance
+        if (currentTime - lastTime < frameInterval) {
+          performanceState.current.animationFrameId = requestAnimationFrame(animate);
+          return;
+        }
+        lastTime = currentTime;
+
         if (sceneRef.current) {
-          sceneRef.current.traverse((child) => {
+          // Use more efficient traversal
+          const children = sceneRef.current.children;
+          for (let i = 0; i < children.length; i++) {
+            const child = children[i];
             if (child.userData && child.userData.index !== undefined) {
               const cellId = child.userData.index;
               const v = gridState.current.intensities[cellId];
@@ -269,30 +283,16 @@ export default function GridBackground() {
                 const nv = v * DECAY;
                 gridState.current.intensities[cellId] = nv;
 
-                // Create high-quality dynamic gradient effect with smooth transitions
+                // Simplified color calculation for better performance
                 const currentColor = new THREE.Color();
 
-                // Use smooth interpolation for better color quality
-                if (nv > 0.9) {
-                  // Peak intensity - bright and vibrant
-                  currentColor.copy(GRADIENT_COLOR_1).lerp(GRADIENT_COLOR_2, 0.2);
-                  currentColor.multiplyScalar(1.1); // Slight brightness boost
-                } else if (nv > 0.7) {
-                  // High intensity - rich gradient
-                  const t = (nv - 0.7) / 0.2;
-                  currentColor.copy(GRADIENT_COLOR_1).lerp(GRADIENT_COLOR_2, t * 0.8);
-                } else if (nv > 0.1) {
-                  // Low intensity - fade to base
-                  const t = (nv - 0.1) / 0.2;
-                  currentColor.copy(BASE_COLOR).lerp(GRADIENT_COLOR_1, t);
+                if (nv > 0.5) {
+                  // High intensity - simple gradient
+                  currentColor.copy(GRADIENT_COLOR_1).lerp(GRADIENT_COLOR_2, (nv - 0.5) * 2);
                 } else {
-                  // Very low intensity - almost base color
-                  currentColor.copy(BASE_COLOR).lerp(GRADIENT_COLOR_1, nv * 5);
+                  // Low intensity - fade to base
+                  currentColor.copy(BASE_COLOR).lerp(GRADIENT_COLOR_1, nv * 2);
                 }
-
-                // Add subtle color variation for more organic look
-                const variation = 0.95 + Math.sin(nv * Math.PI) * 0.1;
-                currentColor.multiplyScalar(variation);
 
                 if (child instanceof THREE.Mesh && child.material instanceof THREE.MeshBasicMaterial) {
                   child.material.color.copy(currentColor);
@@ -304,13 +304,13 @@ export default function GridBackground() {
                 }
               }
             }
-          });
+          }
         }
 
         renderer.render(sceneRef.current!, cameraRef.current!);
 
-        // Monitor performance every 60 frames
-        if (frameCount % 60 === 0) {
+        // Monitor performance every 30 frames (reduced frequency)
+        if (frameCount % 30 === 0) {
           monitorPerformance();
         }
 
@@ -332,7 +332,7 @@ export default function GridBackground() {
         console.log('Grid initialized, starting animation...');
 
         // Start animation
-        animate();
+        animate(performance.now());
         console.log('Animation started');
       };
 

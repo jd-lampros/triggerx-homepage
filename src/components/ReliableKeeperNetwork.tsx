@@ -46,18 +46,40 @@ function ReliableKeeperNetwork() {
 
       const selector = gsap.utils.selector(sectionEl);
 
-      // Set initial states
-      gsap.set(selector(".rk-image"), { autoAlpha: 0, y: 30, rotate: -48 });
-      gsap.set(selector(".rk-title-line"), { autoAlpha: 0, y: 20 });
-      gsap.set(selector(".rk-desc"), { autoAlpha: 0, y: 20 });
-      gsap.set(selector(".rk-card"), { autoAlpha: 0, y: 30 });
+      // Set initial states with hardware acceleration
+      gsap.set(selector(".rk-image"), {
+        autoAlpha: 0,
+        y: 30,
+        rotate: -48,
+        force3D: true,
+        willChange: "transform, opacity"
+      });
+      gsap.set(selector(".rk-title-line"), {
+        autoAlpha: 0,
+        y: 20,
+        force3D: true,
+        willChange: "transform, opacity"
+      });
+      gsap.set(selector(".rk-desc"), {
+        autoAlpha: 0,
+        y: 20,
+        force3D: true,
+        willChange: "transform, opacity"
+      });
+      gsap.set(selector(".rk-card"), {
+        autoAlpha: 0,
+        y: 30,
+        force3D: true,
+        willChange: "transform, opacity"
+      });
 
-      // Image
+      // Image with reduced duration
       gsap.to(selector(".rk-image"), {
         autoAlpha: 1,
         y: 0,
-        duration: 0.8,
-        ease: "power3.out",
+        duration: 0.5, // Reduced duration
+        ease: "power2.out", // Simpler easing
+        force3D: true,
         scrollTrigger: {
           trigger: sectionEl,
           start: "top 75%",
@@ -65,13 +87,14 @@ function ReliableKeeperNetwork() {
         },
       });
 
-      // Title lines
+      // Title lines with reduced duration
       gsap.to(selector(".rk-title-line"), {
         autoAlpha: 1,
         y: 0,
-        duration: 0.6,
-        ease: "power3.out",
-        stagger: 0.12,
+        duration: 0.4, // Reduced duration
+        ease: "power2.out", // Simpler easing
+        stagger: 0.1, // Reduced stagger
+        force3D: true,
         scrollTrigger: {
           trigger: sectionEl,
           start: "top 70%",
@@ -79,12 +102,13 @@ function ReliableKeeperNetwork() {
         },
       });
 
-      // Description
+      // Description with reduced duration
       gsap.to(selector(".rk-desc"), {
         autoAlpha: 1,
         y: 0,
-        duration: 0.7,
-        ease: "power3.out",
+        duration: 0.4, // Reduced duration
+        ease: "power2.out", // Simpler easing
+        force3D: true,
         scrollTrigger: {
           trigger: sectionEl,
           start: "top 65%",
@@ -92,13 +116,14 @@ function ReliableKeeperNetwork() {
         },
       });
 
-      // Cards
+      // Cards with reduced duration
       gsap.to(selector(".rk-card"), {
         autoAlpha: 1,
         y: 0,
-        duration: 0.7,
-        ease: "power3.out",
-        stagger: 0.15,
+        duration: 0.4, // Reduced duration
+        ease: "power2.out", // Simpler easing
+        stagger: 0.1, // Reduced stagger
+        force3D: true,
         scrollTrigger: {
           trigger: sectionEl,
           start: "top 60%",
