@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import AnimatedButton from "./ui/AnimatedButton";
+import { shouldShowPreloader } from "@/lib/visitTracker";
 
 
 const Header = () => {
@@ -27,6 +28,8 @@ const Header = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const mobileMenuItemsRef = useRef<HTMLDivElement[]>([]);
   // Next.js router and current path
   const router = useRouter();
   const pathname = usePathname();
@@ -180,36 +183,16 @@ const Header = () => {
 
 
 
-  // Optimized resize handler with throttling
+  // Initial mobile check (resize handling is now centralized)
   useEffect(() => {
-    let ticking = false;
-
-    const handleResize = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          const isMobileView = window.innerWidth < 1024;
-          setIsMobile(isMobileView);
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    // Initial check
-    handleResize();
-
-    // Add event listener with passive flag
-    window.addEventListener("resize", handleResize, { passive: true });
-
-    // Cleanup
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
+    const isMobileView = window.innerWidth < 800;
+    setIsMobile(isMobileView);
   }, []);
 
   // Optimized GSAP animation for header entrance
   useGSAP(() => {
     const PRELOADER_DURATION = 4.0; // seconds
+    const shouldShowPreloaderAnimation = shouldShowPreloader();
 
     // Function to animate header with reduced complexity
     const animateHeader = () => {
@@ -247,7 +230,7 @@ const Header = () => {
       })
         // Animate logo with reduced delay
         .to(logoRef.current, {
-          duration: 0.4, // Reduced duration
+          duration: 0.6, // Reduced duration
           y: 0,
           opacity: 1,
           ease: "power2.out",
@@ -257,10 +240,12 @@ const Header = () => {
       setAnimationCompleted(true);
     };
 
-    // Start header animation after preloader completes
+    // Start header animation after preloader completes or immediately if no preloader
+    const delay = shouldShowPreloaderAnimation ? PRELOADER_DURATION * 1000 : 0;
+
     const timer = setTimeout(() => {
       animateHeader();
-    }, PRELOADER_DURATION * 1000);
+    }, delay);
 
     // Cleanup timer on unmount
     return () => {
@@ -268,12 +253,50 @@ const Header = () => {
     };
   }, []);
 
+  // GSAP animation for mobile menu
+  useGSAP(() => {
+    if (!mobileMenuRef.current || !mobileMenuItemsRef.current.length) return;
+
+    if (menuOpen) {
+      // Set initial state for menu items
+      gsap.set(mobileMenuItemsRef.current, {
+        y: 100,
+        opacity: 0,
+        force3D: true,
+        willChange: "transform, opacity"
+      });
+
+      // Animate menu items with stagger effect
+      gsap.to(mobileMenuItemsRef.current, {
+        duration: 0.6,
+        y: 0,
+        opacity: 1,
+        ease: "power2.out",
+        stagger: 0.1,
+        force3D: true,
+        onComplete: () => {
+          // Clean up willChange after animation
+          gsap.set(mobileMenuItemsRef.current, { willChange: "auto" });
+        }
+      });
+    } else {
+      // Animate menu items out
+      gsap.to(mobileMenuItemsRef.current, {
+        duration: 0.4,
+        y: -50,
+        opacity: 0,
+        ease: "power2.in",
+        stagger: 0.05,
+        force3D: true
+      });
+    }
+  }, [menuOpen]);
+
   return (
     <>
       {/* Desktop Header */}
       <div
-
-        className={`fixed top-0 left-0 w-full z-[9999] bg-transparent ${isMobile ? "hidden" : "block"} ${!animationCompleted ? "opacity-0" : ""}`}
+        className={`w-full z-[9999] bg-transparent hidden lg:block top-0 left-0 absolute ${!animationCompleted ? "opacity-0" : ""}`}
       >
 
         <div className="absolute top-0 left-1/2 transform -translate-x-1/2 2xl:w-[30vw] lg:w-[32vw] md:w-[30vw] w-[35vw] h-full">
@@ -454,182 +477,190 @@ const Header = () => {
 
       {/* Mobile Header */}
       <div
-        className={`relative h-auto w-full z-50 ${isMobile ? "block" : "hidden"} bg-transparent`}
+        className={`relative h-auto w-full z-50 block lg:hidden bg-transparent`}
       >
         <div
           className="absolute top-0 left-0 right-0 w-full z-50"
         >
           <div className="w-full">
-            <div className="w-[100%] sm:px-10 px-2 flex justify-between gap-3 items-center py-10 header lg:hidden">
-              <div className="relative z-10">
-                <div className="w-full relative">
-                  <Image
-                    src={logo}
-                    alt="TriggerX Logo"
-                    className="w-full"
-                  />
-                </div>
+            <div className="w-[100%] sm:px-10 px-2 flex justify-between gap-3 items-center py-10 lg:hidden">
+              <div className="w-full relative flex items-center justify-start">
+                <Image
+                  src={logo}
+                  alt="TriggerX Logo"
+                  className="w-[70vw] md:w-60"
+                  width={100}
+                  height={100}
+                />
               </div>
               <div
-                className="flex-shrink-0 relative z-10"
+                className="flex-shrink-0 relative z-10 lg:hidden"
               >
-                <div className="lg:hidden">
-                  <div className="menu">
-                    <svg
-                      className={`ham hamRotate ham1 ${menuOpen ? 'active' : ''}`}
-                      viewBox="0 0 100 100"
-                      width="50"
-                      onClick={() => setMenuOpen(!menuOpen)}
-                    >
-                      <path className="line top" d="m 30,33 h 40 c 0,0 9.044436,-0.654587 9.044436,-8.508902 0,-7.854315 -8.024349,-11.958003 -14.89975,-10.85914 -6.875401,1.098863 -13.637059,4.171617 -13.637059,16.368042 v 40" />
-                      <path className="line middle" d="m 30,50 h 40" />
-                      <path className="line bottom" d="m 30,67 h 40 c 12.796276,0 15.357889,-11.717785 15.357889,-26.851538 0,-15.133752 -4.786586,-27.274118 -16.667516,-27.274118 -11.88093,0 -18.499247,6.994427 -18.435284,17.125656 l 0.252538,40" />
-                    </svg>
-                  </div>
-                  {menuOpen && (
-                    <div
-                      className="fixed top-[120px] left-0 right-0 bottom-0 w-full bg-[#0a0a0a] z-[9999] flex items-center justify-center lg:hidden"
-                      onClick={() => setMenuOpen(false)}
-                    >
-                      <nav
-                        ref={navRef}
-                        className="absolute top-0 left-0 w-full max-w-md mx-auto px-6"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <div
-                          className="absolute bg-gradient-to-r from-[#D9D9D924] to-[#14131324] rounded-2xl border border-[#4B4A4A] opacity-0"
-                          style={highlightStyle}
-                        />
-                        <div className="flex flex-col gap-6 items-center">
-                          {navItems.map((item) => (
-                            <div
-                              ref={dropdownRef}
-                              key={item.id}
-                              className="relative w-full"
-                            >
-                              {item.dropdown ? (
-                                <button
-                                  key={item.id}
-                                  onClick={() => {
-                                    handleMenuItemClick(
-                                      item.path || "",
-                                      item.dropdown ?? false
-                                    );
-                                  }}
-                                  className={`font-actayRegular text-lg px-8 py-4 rounded-2xl relative z-10 cursor-pointer flex items-center justify-center gap-2 hover:bg-[#282828] w-full ${item.path && isActiveRoute(item.path)
-                                    ? "text-white"
-                                    : "text-gray-400"
-                                    }`}
-                                >
-                                  {item.label}
+                <div className="menu">
+                  <svg
+                    className={`ham hamRotate ham1 ${menuOpen ? 'active' : ''} w-12`}
+                    viewBox="0 0 100 100"
 
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    strokeWidth="1.5"
-                                    stroke="currentColor"
-                                    className={`w-4 h-4 transition-transform duration-300 ${dropdownOpen ? "rotate-180" : "rotate-0"
-                                      }`}
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                                    />
-                                  </svg>
-                                </button>
-                              ) : item.external ? (
-                                <a
-                                  href={item.path}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  onClick={() => setMenuOpen(false)}
-                                  className="font-actayRegular text-lg px-8 py-4 rounded-2xl relative z-10 cursor-pointer flex items-center justify-center gap-2 hover:bg-[#282828] w-full"
-                                >
-                                  {item.label}
-                                </a>
-                              ) : item.label === "Contact Us" ? (
-                                <button
-                                  onClick={() => {
-                                    handleClick();
-                                    setMenuOpen(false);
-                                  }}
-                                  className={`text-nowrap font-actayRegular text-center text-lg px-8 py-4 rounded-2xl text-white relative z-10 cursor-pointer flex items-center justify-center gap-2 w-full ${item.path && isActiveRoute(item.path)
-                                    ? "text-white"
-                                    : "text-gray-400"
-                                    }`}
-                                >
-                                  {item.label}
-                                </button>
-                              ) : (
-                                <Link
-                                  href={item.path || "/"}
-                                  target="_blank"
-                                  onClick={() => {
-                                    setMenuOpen(false);
-                                  }}
-                                  className={`text-nowrap font-actayRegular text-center text-lg px-8 py-4 rounded-2xl text-white relative z-10 cursor-pointer flex items-center justify-center gap-2 ${item.path && isActiveRoute(item.path)
-                                    ? "text-white"
-                                    : "text-gray-400"
-                                    }`}
-                                >
-                                  {item.label}
-                                </Link>
-                              )}
-                              {item.dropdown && dropdownOpen && item.id === "Get Started" && (
-                                <div
-                                  ref={dropdownRef}
-                                  className="bg-[#181818F0] mt-4 text-sm rounded-2xl shadow-lg border border-[#4b4a4a] w-full"
-                                >
-                                  <div className="py-4 px-6 flex flex-col gap-2">
-                                    <a
-                                      href="https://app.triggerx.network/devhub"
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      onClick={() => setMenuOpen(false)}
-                                      className="font-actayRegular block px-4 py-3 text-white hover:bg-[#282828] rounded-[8px] text-center"
-                                    >
-                                      Dev Hub
-                                    </a>
-                                    <a
-                                      href="https://app.triggerx.network/"
-                                      target="_blank"
-                                      onClick={() => setMenuOpen(false)}
-                                      className="font-actayRegular block px-4 py-3 text-white hover:bg-[#282828] rounded-[8px] text-center"
-                                    >
-                                      Build
-                                    </a>
-                                    <a
-                                      href="https://triggerx.gitbook.io/triggerx-docs/getting-started-as-keepers"
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      onClick={() => setMenuOpen(false)}
-                                      className="font-actayRegular block px-4 py-3 text-white hover:bg-[#282828] rounded-[8px] text-center"
-                                    >
-                                      Join as Keeper
-                                    </a>
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                        <div className="mt-8 px-4">
-                          <AnimatedButton
-                            href="https://app.triggerx.network/"
 
-                            variant="yellow_outline"
-                            flairColor="#fff837"
-                            className="w-50  md:px-6 md:py-3 md:text-lg px-5 py-2.5 text-base"
-                          >
-                            <button className="text-[#fff837]">Start Building</button>
-                          </AnimatedButton>
-                        </div>
-                      </nav>
-                    </div>
-                  )}
+                    onClick={() => setMenuOpen(!menuOpen)}
+                  >
+                    <path className="line top" d="m 30,33 h 40 c 0,0 9.044436,-0.654587 9.044436,-8.508902 0,-7.854315 -8.024349,-11.958003 -14.89975,-10.85914 -6.875401,1.098863 -13.637059,4.171617 -13.637059,16.368042 v 40" />
+                    <path className="line middle" d="m 30,50 h 40" />
+                    <path className="line bottom" d="m 30,67 h 40 c 12.796276,0 15.357889,-11.717785 15.357889,-26.851538 0,-15.133752 -4.786586,-27.274118 -16.667516,-27.274118 -11.88093,0 -18.499247,6.994427 -18.435284,17.125656 l 0.252538,40" />
+                  </svg>
                 </div>
+                {menuOpen && (
+                  <div
+                    ref={mobileMenuRef}
+                    className="fixed top-[120px] left-0 right-0 bottom-0 w-full bg-[#0a0a0a] z-[9999] flex items-center justify-center lg:hidden"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <nav
+                      ref={navRef}
+                      className="absolute top-10 left-0 w-full max-w-md mx-auto px-6"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <div
+                        className="absolute bg-gradient-to-r from-[#D9D9D924] to-[#14131324] rounded-2xl border border-[#4B4A4A] opacity-0"
+                        style={highlightStyle}
+                      />
+                      <div className="flex flex-col gap-6 items-center">
+                        {navItems.map((item, index) => (
+                          <div
+                            ref={(el) => {
+                              if (el) mobileMenuItemsRef.current[index] = el;
+                            }}
+                            key={item.id}
+                            className="relative w-full"
+                          >
+                            {item.dropdown ? (
+                              <button
+                                key={item.id}
+                                onClick={() => {
+                                  handleMenuItemClick(
+                                    item.path || "",
+                                    item.dropdown ?? false
+                                  );
+                                }}
+                                className={`font-actayRegular text-lg px-8 py-4 rounded-2xl relative z-10 cursor-pointer flex items-center justify-center gap-2 hover:bg-[#282828] w-full ${item.path && isActiveRoute(item.path)
+                                  ? "text-white"
+                                  : "text-gray-400"
+                                  }`}
+                              >
+                                {item.label}
+
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  strokeWidth="1.5"
+                                  stroke="currentColor"
+                                  className={`w-4 h-4 transition-transform duration-300 ${dropdownOpen ? "rotate-180" : "rotate-0"
+                                    }`}
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                                  />
+                                </svg>
+                              </button>
+                            ) : item.external ? (
+                              <a
+                                href={item.path}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={() => setMenuOpen(false)}
+                                className="font-actayRegular text-lg px-8 py-4 rounded-2xl relative z-10 cursor-pointer flex items-center justify-center gap-2 hover:bg-[#282828] w-full"
+                              >
+                                {item.label}
+                              </a>
+                            ) : item.label === "Contact Us" ? (
+                              <button
+                                onClick={() => {
+                                  handleClick();
+                                  setMenuOpen(false);
+                                }}
+                                className={`text-nowrap font-actayRegular text-center text-lg px-8 py-4 rounded-2xl text-white relative z-10 cursor-pointer flex items-center justify-center gap-2 w-full ${item.path && isActiveRoute(item.path)
+                                  ? "text-white"
+                                  : "text-gray-400"
+                                  }`}
+                              >
+                                {item.label}
+                              </button>
+                            ) : (
+                              <Link
+                                href={item.path || "/"}
+                                target="_blank"
+                                onClick={() => {
+                                  setMenuOpen(false);
+                                }}
+                                className={`text-nowrap font-actayRegular text-center text-lg px-8 py-4 rounded-2xl text-white relative z-10 cursor-pointer flex items-center justify-center gap-2 ${item.path && isActiveRoute(item.path)
+                                  ? "text-white"
+                                  : "text-gray-400"
+                                  }`}
+                              >
+                                {item.label}
+                              </Link>
+                            )}
+                            {item.dropdown && dropdownOpen && item.id === "Get Started" && (
+                              <div
+                                ref={dropdownRef}
+                                className="bg-[#181818F0] mt-4 text-sm rounded-2xl shadow-lg border border-[#4b4a4a] w-full"
+                              >
+                                <div className="py-4 px-6 flex flex-col gap-2">
+                                  <a
+                                    href="https://app.triggerx.network/devhub"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={() => setMenuOpen(false)}
+                                    className="font-actayRegular block px-4 py-3 text-white hover:bg-[#282828] rounded-[8px] text-center"
+                                  >
+                                    Dev Hub
+                                  </a>
+                                  <a
+                                    href="https://app.triggerx.network/"
+                                    target="_blank"
+                                    onClick={() => setMenuOpen(false)}
+                                    className="font-actayRegular block px-4 py-3 text-white hover:bg-[#282828] rounded-[8px] text-center"
+                                  >
+                                    Build
+                                  </a>
+                                  <a
+                                    href="https://triggerx.gitbook.io/triggerx-docs/getting-started-as-keepers"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={() => setMenuOpen(false)}
+                                    className="font-actayRegular block px-4 py-3 text-white hover:bg-[#282828] rounded-[8px] text-center"
+                                  >
+                                    Join as Keeper
+                                  </a>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                      <div
+                        ref={(el) => {
+                          if (el) mobileMenuItemsRef.current[navItems.length] = el;
+                        }}
+                        className="mt-8 px-4 disable-grid-effect flex items-center justify-center"
+                      >
+                        <AnimatedButton
+                          href="https://app.triggerx.network/"
+
+                          variant="yellow_outline"
+                          flairColor="#fff837"
+                          className="w-50  md:px-6 md:py-3 md:text-lg px-5 py-2.5 text-base"
+                        >
+                          <button className="text-[#fff837]">Start Building</button>
+                        </AnimatedButton>
+                      </div>
+                    </nav>
+                  </div>
+                )}
+
               </div>
             </div>
           </div>

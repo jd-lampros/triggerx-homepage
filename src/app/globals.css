@@ -75,9 +75,6 @@ input {
   -webkit-overflow-scrolling: touch;
 }
 
-.headerbg {
-}
-
 *::-webkit-scrollbar {
   width: 4px;
   height: 4px;

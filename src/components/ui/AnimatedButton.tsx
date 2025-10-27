@@ -8,10 +8,11 @@ interface AnimatedButtonProps {
     children: React.ReactNode;
     className?: string;
     onClick?: () => void;
-    variant?: "primary" | "secondary" | "white_outline" | "yellow_outline";
+    variant?: "primary" | "secondary" | "white_outline" | "yellow_outline" | "nav_link";
     size?: "sm" | "md" | "lg";
     flairColor?: "white" | "black" | string;
     ref?: React.RefObject<HTMLAnchorElement | HTMLButtonElement>;
+
 }
 
 export default function AnimatedButton({
@@ -209,9 +210,11 @@ export default function AnimatedButton({
         case "secondary":
             return "bg-white text-black border-white";
         case "white_outline":
-            return "bg-transparent text-white border-[#ffffff]";
+            return "bg-[#131313] text-white border-[#2E2E2E]";
         case "yellow_outline":
-            return "bg-transparent text-[#fff837] border-[#fff837]";
+            return "bg-[#131313] text-[#fff837] border-[#2E2E2E]";
+        case "nav_link":
+            return "bg-[#131313] text-[#fff837] border-[#2E2E2E]";
         default:
             return "bg-[#fff282] text-black border-[#fff282]";
         }
@@ -232,8 +235,8 @@ export default function AnimatedButton({
     };
 
     const baseStyles =
-        "w-50 inline-flex items-center justify-center gap-1 rounded-full border border-[#fff282] bg-transparent transition-all duration-300 ease-out";
-    const combinedStyles = `bg-transparent ${baseStyles} ${getVariantStyles()} ${getSizeStyles()} ${className}`;
+        "w-50 inline-flex items-center justify-center gap-1 rounded-full border transition-all duration-300 ease-out";
+    const combinedStyles = `${baseStyles} ${getVariantStyles()} ${getSizeStyles()} ${className}`;
 
     if (href) {
         const isHashLink = typeof href === "string" && href.startsWith("#");

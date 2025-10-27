@@ -423,7 +423,7 @@ function WhatIsTriggerX() {
             </h1>
             <p
               ref={descriptionRef}
-              className="text-[#A2A2A2] font-normal font-actayRegular sm:text-lg lg:text-2xl xl:text-2xl 2xl:text-3xl leading-relaxed mb-8"
+              className="text-[#A2A2A2] font-normal font-actayRegular text-xl lg:text-2xl xl:text-2xl 2xl:text-3xl leading-relaxed mb-8"
             >
               TriggerX is a decentralized automation layer for the multi-chain
               world. Instead of reinventing automation for every network,
@@ -497,7 +497,7 @@ function WhatIsTriggerX() {
                   <h3 className="font-actayWide text-2xl sm:text-3xl lg:text-2xl xl:text-3xl font-bold text-white leading-tight text-center mb-6 sm:mb-8">
                     {card.title}
                   </h3>
-                  <p className="text-[#A2A2A2] font-normal font-actayRegular text-lg sm:text-xl lg:text-lg leading-relaxed text-center max-w-md sm:max-w-lg">
+                  <p className="text-[#A2A2A2] font-normal font-actayRegular text-xl lg:text-lg leading-relaxed text-center max-w-md sm:max-w-lg">
                     {card.description}
                   </p>
                 </div>

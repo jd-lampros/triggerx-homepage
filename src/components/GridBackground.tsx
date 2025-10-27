@@ -42,19 +42,10 @@ export default function GridBackground() {
     animationFrameId: 0,
   });
 
-  // Set client-side state and detect mobile
+  // Set client-side state and detect mobile (resize handling is now centralized)
   useEffect(() => {
     setIsClient(true);
-
-    // Check if screen is mobile size (768px and below)
-    const checkIsMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    checkIsMobile();
-    window.addEventListener('resize', checkIsMobile);
-
-    return () => window.removeEventListener('resize', checkIsMobile);
+    setIsMobile(window.innerWidth <= 768);
   }, []);
 
   useEffect(() => {
@@ -346,15 +337,8 @@ export default function GridBackground() {
         }
       }, 100);
 
-      // Event listeners
+      // Event listeners (resize handling is now centralized)
       document.addEventListener('mousemove', onMouseMove);
-      window.addEventListener('resize', () => {
-        const w = window.innerWidth;
-        const h = window.innerHeight;
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1));
-        renderer.setSize(w, h, false);
-        buildGrid();
-      });
 
 
       // Cleanup with performance monitoring

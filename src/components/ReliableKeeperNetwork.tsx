@@ -137,7 +137,7 @@ function ReliableKeeperNetwork() {
   return (
     <section
       ref={sectionRef}
-      className="w-[90%] my-20 py-20 max-w-[2100px] mx-auto"
+      className="w-full md:w-[90%] my-20 py-10 max-w-[2100px] mx-auto"
     >
       <div className="w-[90%] max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
         {/* Left Column - Graphic and Content */}
@@ -167,7 +167,7 @@ function ReliableKeeperNetwork() {
           </div>
 
           {/* Description */}
-          <p className="rk-desc text-[#A2A2A2] text-base sm:text-lg lg:text-2xl xl:text-2xl 2xl:text-3xl leading-relaxed max-w-lg">
+          <p className="rk-desc text-[#A2A2A2] text-xl lg:text-2xl xl:text-2xl 2xl:text-3xl leading-relaxed max-w-lg">
             TriggerX&apos;s decentralized keeper network powers fault-tolerant,
             unstoppable automation.
           </p>
@@ -204,7 +204,7 @@ function ReliableKeeperNetwork() {
                 </div>
               </div>
 
-              <p className="text-[#A2A2A2] lg:text-base xl:text-xl 2xl:text-2xl leading-relaxed font-actayRegular">
+              <p className="text-[#A2A2A2] text-xl lg:text-base xl:text-xl 2xl:text-2xl leading-relaxed font-actayRegular">
                 {card.description}
               </p>
             </div>

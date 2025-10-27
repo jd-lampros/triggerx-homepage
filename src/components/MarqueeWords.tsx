@@ -103,11 +103,11 @@ const MarqueeWords = ({ words, className = "", speed = 1 }: MarqueeWordsProps) =
                         <div className="flex items-center whitespace-nowrap">
                             {/* Render word multiple times with hyphens */}
                             {[1, 2, 3, 4, 5].map((repeat) => (
-                                <div key={repeat} className="flex items-center my-1">
-                                    <span className="text-white font-sharpGrotesk text-[7vh] sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-9xl leading-[100%] tracking-[-0.06em] whitespace-nowrap">
+                                <div key={repeat} className="flex items-center my-2">
+                                    <span className="text-white font-sharpGrotesk text-[6vh] sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-9xl leading-[100%] tracking-[-0.06em] whitespace-nowrap">
                                         {word}
                                     </span>
-                                    <span className="text-white font-sharpGrotesk text-[7vh] sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-9xl leading-[100%] tracking-[-0.06em] mx-4">
+                                    <span className="text-white font-sharpGrotesk text-[6vh] sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-9xl leading-[100%] tracking-[-0.06em] mx-4">
                                         -
                                     </span>
                                 </div>

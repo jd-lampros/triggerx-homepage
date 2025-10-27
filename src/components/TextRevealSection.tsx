@@ -108,7 +108,7 @@ const TextRevealSection = () => {
     <section
       id="textSection"
       ref={textSectionRef}
-      className="w-[90%] mx-auto my-20 max-w-[2100px] pb-20 font-sharpGrotesk"
+      className="w-full p-4 md:p-0 md:w-[90%] mx-auto my-20 max-w-[2100px] pb-20 font-sharpGrotesk"
     >
       <div className="w-full">
         <div

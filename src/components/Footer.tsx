@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import logo from "@/app/assets/footer svgs/footerLogo.svg";
 import Image from "next/image";
 import { Tooltip } from "antd";
 import github from "@/app/assets/footer svgs/github.svg";
@@ -18,6 +17,7 @@ import medium from "@/app/assets/footer svgs/medium.svg";
 import mediumdark from "@/app/assets/footer svgs/mediumdark.svg";
 import youtube from "@/app/assets/footer svgs/youtube.svg";
 import youtubedark from "@/app/assets/footer svgs/youtubedark.svg";
+import AnimatedButton from "./ui/AnimatedButton";
 
 interface FooterSocialLink {
   id: string;
@@ -126,12 +126,14 @@ const footerNavLinksTop = [
   {
     id: "termsOfUse",
     label: "Term of Use",
+    href: "/#",
     isLink: true,
     title: "Available Soon",
   },
   {
     id: "privacyPolicy",
     label: "Privacy Policy",
+    href: "/#",
     isLink: true,
     title: "Available Soon",
   },
@@ -146,7 +148,7 @@ function Footer() {
       {/* Main Content Area - Three Centered Sections */}
       <div className="z-40 flex flex-col items-center justify-center gap-8 md:gap-12 w-[88%] sm:w-[95%] md:w-[85%] xl:w-[70%] mx-auto mt-10 md:mt-20">
         {/* Top Section: Social Icons */}
-        <div className="flex space-x-2 xs:space-x-3 lg:space-x-4 items-center justify-center">
+        <div className="flex space-x-2 xs:space-x-3 lg:space-x-4 items-center justify-center disable-grid-effect">
           {footerSocialLinks.map((link) => (
             <Tooltip
               key={link.id}
@@ -176,34 +178,22 @@ function Footer() {
         </div>
 
         {/* Middle Section: Navigation Buttons */}
-        <div className="flex flex-wrap justify-center gap-x-3 text-[10px] xs:text-[14px] lg:text-[16px] 2xl:text-[18px] whitespace-nowrap tracking-wide">
+        <div className="flex flex-wrap justify-center gap-x-3 text-[10px] xs:text-[14px] lg:text-[16px] 2xl:text-[18px] whitespace-nowrap tracking-wide disable-grid-effect">
           {footerNavLinksTop.map((item) => {
-            if (item.isLink) {
-              if (item.href && item.href.startsWith("http")) {
-                // External link
-                return (
-                  <a
-                    key={item.id}
-                    href={item.href}
-                    className="bg-[#131313] text-white hover:text-[#FBF197] border border-[#2E2E2E] rounded-full px-6 py-3 my-4 md:my-0 hover:border-[#FBF197] transition-colors font-actayRegular"
-                    target={item.target || "_blank"}
-                    rel={item.rel || "noopener noreferrer"}
-                  >
-                    {item.label}
-                  </a>
-                );
-              } else {
-                // Internal link
-                return (
-                  <a
-                    key={item.id}
-                    href={item.href}
-                    className="bg-[#131313] text-white hover:text-[#FBF197] border border-[#2E2E2E] rounded-full px-6 py-3 my-4 md:my-0 hover:border-[#FBF197] transition-colors font-actayRegular"
-                  >
-                    {item.label}
-                  </a>
-                );
-              }
+            if (item.isLink && item.href) {
+              // Use AnimatedButton for all links
+              return (
+                <AnimatedButton
+                  key={item.id}
+                  href={item.href}
+                  variant="white_outline"
+                  size="sm"
+                  flairColor="white"
+                  className="px-6 py-3 my-4 md:my-0 font-actayRegular"
+                >
+                  {item.label}
+                </AnimatedButton>
+              );
             } else {
               // Not a link, just a span
               return (
@@ -272,13 +262,15 @@ function Footer() {
 
       <p className="text-[#8D8D8D] text-[10px] xs:text-[12px] lg:text-[14px] 2xl:text-[15px] mt-0 mx-auto flex items-center justify-center">
         Build with ❤️ by{" "}
-        <a
+        <AnimatedButton
           href="https://lampros.tech/?utm_source=triggerx&utm_medium=footer"
-          target="_blank"
-          className="hover:underline ml-1.5 sm:ml-2"
+          variant="white_outline"
+          size="sm"
+          flairColor="white"
+          className="text-[#8D8D8D] hover:text-white ml-1.5 sm:ml-2 border-none bg-transparent hover:underline"
         >
           Lampros Tech
-        </a>
+        </AnimatedButton>
       </p>
     </footer>
   );

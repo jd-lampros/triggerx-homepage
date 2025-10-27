@@ -116,7 +116,7 @@ function FutureOfBlockchainHero() {
   }, { scope: containerRef });
 
   return (
-    <section className="w-full my-20">
+    <section className="w-full my-20 py-10">
       <div
         ref={containerRef}
         className="w-full mx-auto scale-105 opacity-0 p-8 sm:p-12 lg:p-16 xl:p-20 2xl:p-24 flex flex-col items-center justify-center text-center space-y-8 lg:space-y-12"
@@ -144,7 +144,7 @@ function FutureOfBlockchainHero() {
         <div className="space-y-4 lg:space-y-6">
           <h3
             ref={titleRef}
-            className="font-sharpGrotesk text-2xl sm:text-4xl lg:text-3xl xl:text-2xl 2xl:text-[1.5vw] text-white leading-tight tracking-tight"
+            className="font-sharpGrotesk text-xl lg:text-3xl xl:text-2xl 2xl:text-[1.5vw] text-white leading-tight tracking-tight"
           >
             The future of blockchain is automated. Trigger it with TriggerX
           </h3>
@@ -159,11 +159,11 @@ function FutureOfBlockchainHero() {
           </Link> */}
           <AnimatedButton
             href="https://app.triggerx.network/"
-            variant="white_outline"
-            flairColor="white"
+            variant="yellow_outline"
+            flairColor="#fff837"
             className="w-50  md:px-6 md:py-3 md:text-lg px-5 py-2.5 text-base"
           >
-            <button className="text-white">Start Building</button>
+            <button>Start Building</button>
           </AnimatedButton>
         </div>
       </div>

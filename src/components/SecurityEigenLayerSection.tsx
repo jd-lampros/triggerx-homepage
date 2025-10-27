@@ -234,7 +234,7 @@ function SecurityEigenLayerSection() {
   return (
     <section
       ref={sectionRef}
-      className="w-[90%] my-20 py-20 max-w-[2100px] mx-auto"
+      className="w-full md:w-[90%] my-20 py-10 max-w-[2100px] mx-auto"
     >
       <div className="text-center mb-12 lg:mb-16">
         <h1 className="font-sharpGrotesk text-3xl sm:text-4xl lg:text-[3vw] xl:text-[3vw] 2xl:text-[3vw] text-white mb-6 lg:mb-8">
@@ -242,7 +242,7 @@ function SecurityEigenLayerSection() {
             Security & EigenLayer AVS
           </span>
         </h1>
-        <p className="se-desc text-[#A2A2A2] text-base sm:text-lg lg:text-2xl xl:text-2xl 2xl:text-3xl max-w-4xl mx-auto leading-relaxed px-4">
+        <p className="se-desc text-[#A2A2A2] text-xl sm:text-lg lg:text-2xl xl:text-2xl 2xl:text-3xl max-w-4xl mx-auto leading-relaxed px-4">
           TriggerX leverages EigenLayer&apos;s Actively Validated Services (AVS)
           to bring Ethereum-grade security to automation.
         </p>
@@ -283,10 +283,10 @@ function SecurityEigenLayerSection() {
                 />
               </div>
             </div>
-            <h3 className="max-w-[80%] font-actayWide text-lg sm:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-bold text-white leading-tight">
+            <h3 className="max-w-[80%] font-actayWide text-2xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-bold text-white leading-tight">
               {card.title}
             </h3>
-            <p className="text-[#A2A2A2] text-sm lg:text-base xl:text-xl 2xl:text-2xl leading-relaxed">
+            <p className="text-[#A2A2A2] text-xl lg:text-base xl:text-xl 2xl:text-2xl leading-relaxed">
               {card.description}
             </p>
           </div>
@@ -306,7 +306,7 @@ function SecurityEigenLayerSection() {
       >
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 lg:gap-8">
           {statistics.map((stat) => (
-            <div key={stat.id} className="text-left p-6 lg:p-8">
+            <div key={stat.id} className="text-center md:text-left p-6 lg:p-8">
               <div className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-white mb-2">
                 {isLoading ? (
                   <div className="animate-pulse bg-gray-700 h-12 w-24 rounded"></div>
@@ -314,7 +314,7 @@ function SecurityEigenLayerSection() {
                   stat.value
                 )}
               </div>
-              <div className="text-[#A2A2A2] text-sm lg:text-base xl:text-xl 2xl:text-2xl">
+              <div className="text-[#A2A2A2] text-2xl lg:text-base xl:text-xl 2xl:text-2xl">
                 {stat.label}
               </div>
               {/* {stat.subtitle && (

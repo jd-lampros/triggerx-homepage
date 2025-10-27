@@ -46,32 +46,18 @@ export default function Why({
   const wrappedItems = [...Boxdata, ...Boxdata, ...Boxdata];
   const totalItems = Boxdata.length;
 
-  // Update screen width and item width on mount and resize with throttling
+  // Update screen width and item width on mount (resize handling is now centralized)
   useEffect(() => {
-    let ticking = false;
+    const width: number = window.innerWidth;
+    setIsMobile(width < 640);
 
-    const updateDimensions = (): void => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          const width: number = window.innerWidth;
-          setIsMobile(width < 640);
-
-          if (width < 640) {
-            setItemWidth(width - 32);
-          } else if (width < 1024) {
-            setItemWidth(350);
-          } else {
-            setItemWidth(350);
-          }
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    updateDimensions();
-    window.addEventListener("resize", updateDimensions, { passive: true });
-    return () => window.removeEventListener("resize", updateDimensions);
+    if (width < 640) {
+      setItemWidth(width - 32);
+    } else if (width < 1024) {
+      setItemWidth(350);
+    } else {
+      setItemWidth(350);
+    }
   }, []);
 
   useEffect(() => {

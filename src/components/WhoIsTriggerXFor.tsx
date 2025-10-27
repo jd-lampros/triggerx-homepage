@@ -139,7 +139,7 @@ function WhoIsTriggerXFor() {
     return useCasesData.pills.map((pill) => (
       <div
         key={pill.id}
-        className="bg-[#141414] rounded-full px-3 py-3 lg:px-3 lg:py-3 flex items-center gap-3 lg:gap-4 border border-[#ffffff1a] hover:border-[#FBF197] transition-colors"
+        className="bg-[#141414] rounded-full px-2 py-2 md:px-3 md:py-3 lg:px-3 lg:py-3 flex items-center gap-3 lg:gap-4 border border-[#ffffff1a] hover:border-[#FBF197] transition-colors"
       >
         <div className="w-14 h-14 rounded-full p-[1px] bg-gradient-to-b from-[#FBF197] to-[rgba(130,251,208,0.37)]">
           <div className="w-full h-full rounded-full bg-black flex items-center justify-center">
@@ -154,7 +154,7 @@ function WhoIsTriggerXFor() {
             </div>
           </div>
         </div>
-        <span className="text-white text-sm lg:text-2xl font-actayRegular whitespace-nowrap font-actayRegular mr-4">
+        <span className="text-white text-lg lg:text-2xl font-actayRegular whitespace-nowrap font-actayRegular mr-4">
           {pill.text}
         </span>
       </div>
@@ -162,7 +162,7 @@ function WhoIsTriggerXFor() {
   };
 
   return (
-    <section ref={sectionRef} className="mx-auto my-20 py-20 max-w-[2100px]">
+    <section ref={sectionRef} className="mx-auto my-20 py-10 max-w-[2100px]">
       <div className="w-[90%] mx-auto text-center space-y-12 mb-12">
         {/* Logo Placeholder */}
         <div
@@ -191,7 +191,7 @@ function WhoIsTriggerXFor() {
         {/* Description */}
         <p
           ref={descriptionRef}
-          className="text-[#A2A2A2] text-base sm:text-lg lg:text-2xl xl:text-2xl 2xl:text-3xl max-w-4xl mx-auto leading-relaxed mb-8 lg:mb-12 px-4"
+          className="text-[#A2A2A2] text-xl sm:text-lg lg:text-2xl xl:text-2xl 2xl:text-3xl max-w-4xl mx-auto leading-relaxed mb-8 lg:mb-12 px-4"
         >
           Whether you&apos;re a dApp developer, DeFi protocol creator, or
           enterprise innovator, TriggerX empowers you to automate tasks with

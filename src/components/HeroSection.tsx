@@ -13,6 +13,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import AnimatedButton from "./ui/AnimatedButton";
 import MarqueeWords from "./MarqueeWords";
+import { shouldShowPreloader } from "@/lib/visitTracker";
 
 function HeroSection() {
   // Refs for animation elements
@@ -162,6 +163,7 @@ function HeroSection() {
   // Optimized GSAP animation for hero section entrance
   useGSAP(() => {
     const PRELOADER_DURATION = 4.0; // seconds
+    const shouldShowPreloaderAnimation = shouldShowPreloader();
 
     // Function to animate hero content with reduced complexity
     const animateHeroContent = () => {
@@ -222,10 +224,12 @@ function HeroSection() {
       setAnimationCompleted(true);
     };
 
-    // Start hero animation after preloader completes
+    // Start hero animation after preloader completes or immediately if no preloader
+    const delay = shouldShowPreloaderAnimation ? PRELOADER_DURATION * 1000 : 0;
+
     const timer = setTimeout(() => {
       animateHeroContent();
-    }, PRELOADER_DURATION * 1000);
+    }, delay);
 
     // Cleanup timer on unmount
     return () => {
@@ -238,7 +242,7 @@ function HeroSection() {
       <div className="relative z-0 mx-auto">
         <div className="relative z-10">
           {/* Hero Section */}
-          <section className={`pt-40 lg:pt-40 md:mb-20 mb-0 min-h-[calc(100vh-90px)] md:min-h-screen mx-auto flex flex-col justify-center items-center ${!animationCompleted ? "opacity-0" : ""}`}>
+          <section className={`pt-40 lg:pt-40 md:mb-20 mb-10 min-h-[calc(100vh-90px)] md:min-h-screen mx-auto flex flex-col justify-center items-center ${!animationCompleted ? "opacity-0" : ""}`}>
             <div
               ref={titleRef}
               className="font-sharpGrotesk w-full text-center"
@@ -279,7 +283,7 @@ function HeroSection() {
 
             <h4
               ref={poweredByRef}
-              className="flex items-center gap-4 relative text-[#A2A2A2] font-actayRegular text-center text-sm sm:text-lg lg:text-xl py-3 sm:py-5 px-6 sm:px-16 lg:px-20 xl:px-36 tracking-wide leading-[2rem] font-normal w-fit mx-auto my-6 md:my-10"
+              className="flex items-center gap-4 relative text-[#A2A2A2] font-actayRegular text-center text-xl sm:text-lg lg:text-xl py-3 sm:py-5 px-6 sm:px-16 lg:px-20 xl:px-36 tracking-wide leading-[2rem] font-normal w-fit mx-auto my-6 md:my-10"
             >
               Powered by{" "}
               <Image
@@ -288,7 +292,7 @@ function HeroSection() {
                 width={80}
                 height={80}
                 quality={100}
-                className="w-16 md:w-20 lg:w-22 h-auto"
+                className="w-20 md:w-20 lg:w-22 h-auto"
               ></Image>
               <div className="absolute top-0 left-0 w-4 h-4 sm:w-5 sm:h-5 border-t-2 border-l-2 sm:border-t-4 sm:border-l-4 border-[#5047FF] rounded-tl-md sm:rounded-tl-xl"></div>
               <div className="absolute bottom-0 right-0 w-4 h-4 sm:w-5 sm:h-5 border-b-2 border-r-2 sm:border-b-4 sm:border-r-4 border-[#5047FF] rounded-br-md sm:rounded-br-xl"></div>
