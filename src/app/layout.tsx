@@ -22,8 +22,16 @@ const sharpGrotesk300Light25 = localFont({
   display: "swap",
 });
 
+const sharpGroteskMedium25 = localFont({
+  src: "../../public/fonts/SharpGrotesk-Medium25.otf",
+  weight: "500",
+  style: "normal",
+  variable: "--font-sharp-grotesk-medium-25",
+  display: "swap",
+});
+
 const sharpGroteskMedium20 = localFont({
-  src: "../../public/fonts/ActayWide-Bold.otf",
+  src: "../../public/fonts/SharpGrotesk-Medium20.otf",
   weight: "500",
   style: "normal",
   variable: "--font-sharp-grotesk-medium-20",
@@ -110,7 +118,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${actayRegular.variable} ${sharpGrotesk300Light25.variable} ${sharpGroteskMedium20.variable} ${actayWideBold.variable}`}
+      className={`${actayRegular.variable} ${sharpGrotesk300Light25.variable} ${sharpGroteskMedium20.variable} ${sharpGroteskMedium25.variable} ${actayWideBold.variable}`}
     >
       <GoogleTagManager gtmId="GTM-T9XQH8N8" />
       <body suppressHydrationWarning>

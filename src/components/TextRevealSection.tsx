@@ -113,31 +113,31 @@ const TextRevealSection = () => {
       <div className="w-full">
         <div
           ref={textWrapperRef}
-          className="wrapper space-y-12 text-[12vw] sm:text-4xl md:text-[8vw] lg:text-[8vw] xl:text-[8vw] 2xl:text-[8vw]"
+          className="wrapper space-y-12 font-actayWide text-[12vw] sm:text-4xl md:text-[8vw] lg:text-[8vw] xl:text-[8vw] 2xl:text-[8vw]"
         >
-          <p className="text-[#3b3b3b] font-actayWide leading-[110%]">
+          <p className="text-[#3b3b3b] leading-[110%]">
             <span className="text-[#ffffff]">Blockchain</span> moves{" "}
             <span className="text-[#ffffff]">fast</span>.
           </p>
 
-          <p className="text-[#3b3b3b] font-actayWide leading-[110%]">
+          <p className="text-[#3b3b3b] leading-[110%]">
             New <span className="text-[#ffffff]">chains</span> multiply.
           </p>
 
-          <p className="text-[#3b3b3b] font-actayWide leading-[110%]">
+          <p className="text-[#3b3b3b] leading-[110%]">
             <span className="text-[#ffffff]">Automation</span> lags behind.
           </p>
 
-          <p className="text-[#3b3b3b] font-actayWide leading-[110%]">
+          <p className="text-[#3b3b3b] leading-[110%]">
             <span className="text-[#ffffff]">Developers</span> rely on{" "}
             centralized scripts.
           </p>
 
-          <p className="text-[#3b3b3b] font-actayWide leading-[110%]">
+          <p className="text-[#3b3b3b] leading-[110%]">
             The result? <span className="text-[#ffffff]">Inefficiency</span> and
             risk.
           </p>
-          <p className="text-[#3b3b3b] font-actayWide leading-[110%]">
+          <p className="text-[#3b3b3b] leading-[110%]">
             And the answer is
           </p>
           <svg

@@ -21,6 +21,10 @@ const config: Config = {
           "var(--font-sharp-grotesk-medium-20)",
           "sans-serif",
         ],
+        sharpGroteskMedium25: [
+          "var(--font-sharp-grotesk-medium-25)",
+          "sans-serif",
+        ],
         actay: ["var(--font-actay-regular)", "sans-serif"],
         actayWide: ["var(--font-actay-wide-bold)", "sans-serif"],
       },

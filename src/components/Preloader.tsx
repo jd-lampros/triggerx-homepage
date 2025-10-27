@@ -97,8 +97,6 @@ export default function Preloader({ onComplete }: PreloaderProps) {
                 opacity: 0,
                 ease: "power2.easeOut",
             }, 3.6);
-
-
     }, []);
 
     return (
@@ -108,7 +106,7 @@ export default function Preloader({ onComplete }: PreloaderProps) {
                     <path
                         ref={svgRef}
                         d="M0,1005S175,995,500,995s500,5,500,5V0H0Z"
-                        fill="#171717"
+                        fill="#131313"
                     />
                 </svg>
                 <div className="loader-wrap-heading">
