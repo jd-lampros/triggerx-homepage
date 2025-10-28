@@ -1,113 +1,25 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { useRef } from "react";
-import { useEffect as useGsapEffect } from "react";
-import { loadGSAP, loadMorphSVG, preloadGSAP } from "@/lib/gsapLoader";
+import { useRef, useEffect } from "react";
 
-interface PreloaderProps {
+interface PreloaderFallbackProps {
     onComplete?: () => void;
 }
 
-export default function Preloader({ onComplete }: PreloaderProps) {
+export default function PreloaderFallback({ onComplete }: PreloaderFallbackProps) {
     const svgRef = useRef<SVGPathElement>(null);
     const loaderWrapRef = useRef<HTMLDivElement>(null);
     const logoRef = useRef<SVGSVGElement>(null);
 
-    useGsapEffect(() => {
-        let isMounted = true;
+    useEffect(() => {
+        // CSS-only animation for immediate LCP
+        const timer = setTimeout(() => {
+            document.body.classList.add("animationCompleted");
+            document.body.style.overflow = "visible";
+            onComplete?.();
+        }, 2000); // Reduced duration for better LCP
 
-        // Preload GSAP immediately for faster loading
-        preloadGSAP();
-
-        (async () => {
-            const gsap = await loadGSAP();
-            await loadMorphSVG();
-
-            if (!isMounted || !gsap) return;
-
-            const tl = (gsap as any).timeline({
-                onComplete: () => {
-                    // add classname to the body by which we will show this loader and if is there then hide the loader.
-                    document.body.classList.add("animationCompleted");
-                    document.body.style.overflow = "visible";
-                    onComplete?.();
-                },
-            });
-
-            const curve = "M0 502S175 272 500 272s500 230 500 230V0H0Z";
-            const flat = "M0 2S175 1 500 1s500 1 500 1V0H0Z";
-
-            // Get all path elements in the logo
-            const paths = logoRef.current?.querySelectorAll('path');
-
-            if (paths) {
-                // Create simplified rectangular paths based on original character bounds
-                const simplifiedPaths = [
-                    "M0 0.601318 H22.7495 V23.289 H0 Z", // T
-                    "M24.397 0.601318 H48.6672 V23.289 H24.397 Z", // R
-                    "M50.1108 0.711914 H72.8604 V23.2858 H50.1108 Z", // I
-                    "M73.8716 0.000244141 H101.434 V23.9998 H73.8716 Z", // G
-                    "M102.875 0.000244141 H130.155 V23.9238 H102.875 Z", // G
-                    "M131.847 0.711914 H154.143 V23.2858 H131.847 Z", // E
-                    "M155.845 0.711914 H180.05 V23.2858 H155.845 Z", // R
-                    "M182.242 0.711914 H229.862 V23.4009 H182.242 Z", // X (wider)
-                ];
-
-                // Set initial simplified rectangular paths
-                paths.forEach((path, index) => {
-                    const originalPath = path.getAttribute('data-original');
-                    if (originalPath && index < simplifiedPaths.length) {
-                        // Set the path to a    simple rectangle
-                        path.setAttribute('d', simplifiedPaths[index]);
-                    }
-                });
-
-                // Animate each path from y: -100 to y: 0, then morph to original shape
-                paths.forEach((path, index) => {
-                    const originalPath = path.getAttribute('data-original');
-                    if (originalPath && index < simplifiedPaths.length) {
-                        // Set initial position below (y: 100)
-                        (gsap as any).set(path, { y: 100 });
-
-                        // Animate to y: 0, then morph to original shape (faster)
-                        tl.to(path, {
-                            duration: 0.4,
-                            y: 0,
-                            ease: "power2.out",
-                        }, index * 0.1)
-                            .to(path, {
-                                duration: 0.5,
-                                morphSVG: originalPath,
-                                ease: "power2.out",
-                            }, index * 0.1 + 0.4);
-                    }
-                });
-
-                // After ALL morphing is complete, move characters upward together (faster)
-                // Last morph ends at: (7 * 0.1) + 0.4 + 0.5 = 1.6s
-                tl.to(paths, {
-                    duration: 0.5,
-                    y: -400,
-                    ease: "power2.out",
-                    stagger: 0.03,
-                }, 1.6);
-            }
-
-            // Continue with the rest of the animation to complete at ~2.5s total
-            tl.to(svgRef.current, {
-                duration: 0.2,
-                attr: { d: curve },
-                ease: "power2.easeIn",
-            }, 2.1)
-                .to(svgRef.current, {
-                    duration: 0.2,
-                    attr: { d: flat },
-                    opacity: 0,
-                    ease: "power2.easeOut",
-                }, 2.3);
-        })();
-        return () => { isMounted = false; };
-    }, []);
+        return () => clearTimeout(timer);
+    }, [onComplete]);
 
     return (
         <>
@@ -117,6 +29,7 @@ export default function Preloader({ onComplete }: PreloaderProps) {
                         ref={svgRef}
                         d="M0,1005S175,995,500,995s500,5,500,5V0H0Z"
                         fill="#131313"
+                        className="animate-pulse"
                     />
                 </svg>
                 <div className="loader-wrap-heading">
@@ -143,9 +56,6 @@ export default function Preloader({ onComplete }: PreloaderProps) {
                     </svg>
                 </div>
             </div>
-            {/* <div ref={containerRef} className="preloader-container">
-                This will be the main content that appears after preloader
-            </div> */}
         </>
     );
 }

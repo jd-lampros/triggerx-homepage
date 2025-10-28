@@ -9,8 +9,7 @@ import SecurityEigenLayerSection from "./SecurityEigenLayerSection";
 import WhoIsTriggerXFor from "./WhoIsTriggerXFor";
 import ReliableKeeperNetwork from "./ReliableKeeperNetwork";
 import FutureOfBlockchainHero from "./FutureOfBlockchainHero";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
+import { useEffect as useGsapEffect } from "react";
 import AnimatedButton from "./ui/AnimatedButton";
 import MarqueeWords from "./MarqueeWords";
 import { shouldShowPreloader } from "@/lib/visitTracker";
@@ -25,148 +24,14 @@ function HeroSection() {
   const buttonsRef = useRef<HTMLDivElement>(null);
   const [animationCompleted, setAnimationCompleted] = useState(false);
 
-  // useEffect(() => {
-  //   // Always scroll to the top of the page on component mount/refresh
-  //   window.scrollTo(0, 0);
-
-  //   // Set initial position below viewport
-  //   gsap.set(nextGenRef.current, {
-  //     position: "relative",
-  //     top: "200vh",
-  //     opacity: 0,
-  //   });
-
-  //   // Create a GSAP timeline for the initial animation
-  //   const tl = gsap.timeline({
-  //     onComplete: () => {
-  //       gsap.set(nextGenRef.current, {
-  //         opacity: 1,
-  //         yPercent: 0,
-  //         position: "relative",
-  //         top: 0,
-  //       });
-  //     },
-  //   });
-
-  //   // Animate the content up with the header
-  //   tl.to(nextGenRef.current, {
-  //     top: 0,
-  //     opacity: 1,
-  //     duration: 1,
-  //     ease: "power2.out",
-  //   });
-
-  //   // Reset horizontal scroll position if the section exists
-  //   if (section2Ref.current) {
-  //     section2Ref.current.scrollLeft = 0;
-  //   }
-
-  //   // Define a scroll event handler for the page
-  //   const handleScroll = () => {
-  //     // Update visibility state
-  //     setIsVisible(window.scrollY === 0);
-
-  //     // Handle horizontal scroll reset
-  //     if (scrollTimeout.current) {
-  //       clearTimeout(scrollTimeout.current);
-  //     }
-
-  //     if (!isScrolling.current) {
-  //       isScrolling.current = true;
-  //     }
-
-  //     scrollTimeout.current = setTimeout(() => {
-  //       isScrolling.current = false;
-  //       if (section2Ref.current) {
-  //         section2Ref.current.scrollTo({
-  //           left: 0,
-  //           behavior: "smooth",
-  //         });
-  //       }
-  //     }, 150);
-  //   };
-
-  //   // Add the scroll event listener
-  //   window.addEventListener("scroll", handleScroll);
-
-  //   // Cleanup: remove scroll event listener and kill all GSAP ScrollTriggers
-  //   return () => {
-  //     window.removeEventListener("scroll", handleScroll);
-  //     ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-  //   };
-  // }, []); // Empty dependency array since we only want this to run once on mount
-
-  // useEffect(() => {
-  //   // Get the container element for horizontal scroll
-  //   const container = section2Ref.current;
-  //   let isInScrollZone = false;
-
-  //   // Function to check if the section is in the active scroll zone
-  //   const checkScrollZone = () => {
-  //     if (!container) return false;
-  //     const rect = container.getBoundingClientRect();
-  //     return rect.top <= 120 && rect.bottom > 0;
-  //   };
-
-  //   // Handle wheel events to hijack vertical scroll and turn it into horizontal scroll
-  //   const handleWheel = (event) => {
-  //     if (!container || !isInScrollZone) return;
-
-  //     const maxScrollLeft = container.scrollWidth - container.clientWidth;
-
-  //     if (container.scrollLeft < maxScrollLeft && event.deltaY > 0) {
-  //       event.preventDefault();
-  //       container.scrollLeft += event.deltaY;
-  //     } else if (container.scrollLeft > 0 && event.deltaY < 0) {
-  //       event.preventDefault();
-  //       container.scrollLeft += event.deltaY;
-  //     }
-  //   };
-
-  //   // Global scroll handler to detect when section enters/exits the scroll zone
-  //   const handleGlobalScroll = () => {
-  //     isInScrollZone = checkScrollZone();
-  //   };
-
-  //   // Initial check to set isInScrollZone
-  //   handleGlobalScroll();
-
-  //   // Add event listeners
-  //   window.addEventListener("scroll", handleGlobalScroll);
-  //   window.addEventListener("wheel", handleWheel, { passive: false });
-
-  //   // Cleanup: remove event listeners
-  //   return () => {
-  //     window.removeEventListener("scroll", handleGlobalScroll);
-  //     window.removeEventListener("wheel", handleWheel);
-  //   };
-  // }, []); // Empty dependency array since we only want this to run once on mount
-
-  // // Add this useEffect for initial client-side setup
-  // useEffect(() => {
-  //   setIsVisible(window.scrollY === 0);
-  // }, []);
-
-  // // Update visibility effect
-  // useEffect(() => {
-  //   // Define a handler to update visibility state on scroll
-  //   const handleVisibility = () => {
-  //     setIsVisible(window.scrollY === 0);
-  //   };
-
-  //   // Add scroll event listener
-  //   window.addEventListener("scroll", handleVisibility);
-  //   // Cleanup: remove scroll event listener
-  //   return () => window.removeEventListener("scroll", handleVisibility);
-  // }, []);
-
-  // Optimized GSAP animation for hero section entrance
-  useGSAP(() => {
-    const PRELOADER_DURATION = 4.0; // seconds
+  // Optimized GSAP animation for hero section entrance (lazy-loaded GSAP)
+  useGsapEffect(() => {
+    const PRELOADER_DURATION = 2.5; // seconds - reduced to 2.5s
     const shouldShowPreloaderAnimation = shouldShowPreloader();
 
-    // Function to animate hero content with reduced complexity
-    const animateHeroContent = () => {
+    // Function to animate hero content with reduced complexity 
+    const animateHeroContent = async () => {
+      const gsap = (await import("gsap")).default;
       if (!poweredByRef.current || !buttonsRef.current) return;
 
       // Use hardware acceleration for better performance

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 
+
 // Optimized configuration constants for better performance
 const TARGET_CELL_PX = 35; // Increased for fewer cells
 const GAP_PX = 3; // Increased gap

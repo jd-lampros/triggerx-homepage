@@ -4,7 +4,7 @@
  */
 
 const VISIT_STORAGE_KEY = "triggerx_last_visit";
-const VISIT_THRESHOLD = 10 * 60 * 1000; // 10 minutes in milliseconds
+const VISIT_THRESHOLD = 5 * 1000; // 5 seconds in milliseconds
 
 export interface VisitData {
   timestamp: number;

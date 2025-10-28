@@ -7,8 +7,7 @@ import crystal from "../app/assets/crystal_hero-2.png";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
+import { useEffect as useGsapEffect } from "react";
 import AnimatedButton from "./ui/AnimatedButton";
 import { shouldShowPreloader } from "@/lib/visitTracker";
 
@@ -189,13 +188,14 @@ const Header = () => {
     setIsMobile(isMobileView);
   }, []);
 
-  // Optimized GSAP animation for header entrance
-  useGSAP(() => {
-    const PRELOADER_DURATION = 4.0; // seconds
+  // Optimized GSAP animation for header entrance (lazy-loaded GSAP)
+  useGsapEffect(() => {
+    const PRELOADER_DURATION = 2.5; // seconds - reduced to 2.5s
     const shouldShowPreloaderAnimation = shouldShowPreloader();
 
     // Function to animate header with reduced complexity
-    const animateHeader = () => {
+    const animateHeader = async () => {
+      const gsap = (await import("gsap")).default;
       if (!headerRef.current || !logoRef.current) return;
 
       // Use transform3d for hardware acceleration
@@ -253,42 +253,48 @@ const Header = () => {
     };
   }, []);
 
-  // GSAP animation for mobile menu
-  useGSAP(() => {
+  // GSAP animation for mobile menu (lazy-loaded GSAP)
+  useGsapEffect(() => {
     if (!mobileMenuRef.current || !mobileMenuItemsRef.current.length) return;
 
     if (menuOpen) {
       // Set initial state for menu items
-      gsap.set(mobileMenuItemsRef.current, {
-        y: 100,
-        opacity: 0,
-        force3D: true,
-        willChange: "transform, opacity"
-      });
+      (async () => {
+        const gsap = (await import("gsap")).default;
+        gsap.set(mobileMenuItemsRef.current, {
+          y: 100,
+          opacity: 0,
+          force3D: true,
+          willChange: "transform, opacity"
+        });
 
-      // Animate menu items with stagger effect
-      gsap.to(mobileMenuItemsRef.current, {
-        duration: 0.6,
-        y: 0,
-        opacity: 1,
-        ease: "power2.out",
-        stagger: 0.1,
-        force3D: true,
-        onComplete: () => {
-          // Clean up willChange after animation
-          gsap.set(mobileMenuItemsRef.current, { willChange: "auto" });
-        }
-      });
+        // Animate menu items with stagger effect
+        gsap.to(mobileMenuItemsRef.current, {
+          duration: 0.6,
+          y: 0,
+          opacity: 1,
+          ease: "power2.out",
+          stagger: 0.1,
+          force3D: true,
+          onComplete: () => {
+            // Clean up willChange after animation
+            gsap.set(mobileMenuItemsRef.current, { willChange: "auto" });
+          }
+        });
+      })();
     } else {
       // Animate menu items out
-      gsap.to(mobileMenuItemsRef.current, {
-        duration: 0.4,
-        y: -50,
-        opacity: 0,
-        ease: "power2.in",
-        stagger: 0.05,
-        force3D: true
-      });
+      (async () => {
+        const gsap = (await import("gsap")).default;
+        gsap.to(mobileMenuItemsRef.current, {
+          duration: 0.4,
+          y: -50,
+          opacity: 0,
+          ease: "power2.in",
+          stagger: 0.05,
+          force3D: true
+        });
+      })();
     }
   }, [menuOpen]);
 
@@ -303,8 +309,7 @@ const Header = () => {
           <div className="relative w-full h-full 2xl:translate-y-[-180%] lg:translate-y-[-152%] translate-y-[-130%]">
             <Image
               src={crystal}
-              alt="TriggerX Logo"
-
+              alt="Crystal Image"
               priority
               quality={80}
               sizes="(max-width: 768px) 35vw, (max-width: 1024px) 30vw, (max-width: 1536px) 32vw, 30vw"
@@ -328,7 +333,8 @@ const Header = () => {
                       src={logo}
                       alt="TriggerX Logo"
                       priority
-                      className="w-full"
+                      quality={90}
+                      sizes="(max-width: 768px) 35vw, (max-width: 1024px) 30vw, (max-width: 1536px) 32vw, 30vw"
                     />
                   </Link>
                 </div>

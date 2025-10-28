@@ -2,6 +2,63 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Critical CSS for Preloader LCP */
+.loader-wrap {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #0a0a0a;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loader-wrap-heading {
+  position: relative;
+  z-index: 10;
+}
+
+/* Ensure preloader is visible immediately */
+body:not(.animationCompleted) .loader-wrap {
+  display: flex !important;
+}
+
+body.animationCompleted .loader-wrap {
+  display: none !important;
+}
+
+/* Optimize font loading */
+@font-face {
+  font-family: "SharpGrotesk-Light25";
+  src: url("/fonts/SharpGrotesk-Light25.otf") format("opentype");
+  font-display: swap;
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: "SharpGrotesk-Medium25";
+  src: url("/fonts/SharpGrotesk-Medium25.otf") format("opentype");
+  font-display: swap;
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: "Actay-Regular";
+  src: url("/fonts/Actay-Regular.otf") format("opentype");
+  font-display: swap;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "ActayWide-Bold";
+  src: url("/fonts/ActayWide-Bold.otf") format("opentype");
+  font-display: swap;
+  font-weight: 700;
+}
+
 :root {
   --background: #090909;
   --foreground: #ededed;
