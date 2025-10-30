@@ -103,10 +103,27 @@ const footerNavLinksTop = [
     target: "_blank",
     rel: "noopener noreferrer",
   },
+  // {
+  //   id: "build",
+  //   label: "Build",
+  //   href: "/",
+  //   isLink: true,
+  // },
+
   {
-    id: "build",
-    label: "Build",
-    href: "/",
+    id: "leaderboard",
+    label: "Leaderboard",
+    href: "https://app.triggerx.network/leaderboard",
+    target: "_blank",
+    rel: "noopener noreferrer",
+    isLink: true,
+  },
+  {
+    id: "devhub",
+    label: "Dev Hub",
+    href: "https://app.triggerx.network/devhub",
+    target: "_blank",
+    rel: "noopener noreferrer",
     isLink: true,
   },
   {
@@ -117,12 +134,7 @@ const footerNavLinksTop = [
     target: "_blank",
     rel: "noopener noreferrer",
   },
-  {
-    id: "devhub",
-    label: "Dev Hub",
-    href: "/devhub",
-    isLink: true,
-  },
+
   {
     id: "termsOfUse",
     label: "Term of Use",

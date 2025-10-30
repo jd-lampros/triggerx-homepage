@@ -44,22 +44,27 @@ const Header = () => {
   // Navigation items for the menu
   const navItems: NavItem[] = [
     {
+      id: "Dev Hub",
+      path: "https://app.triggerx.network/devhub",
+      label: "Dev Hub",
+      target: "_blank",
+      external: true,
+    },
+    {
       id: "Leaderboard",
       path: "https://app.triggerx.network/leaderboard",
       label: "Leaderboard",
       target: "_blank",
       external: true,
-    }, {
-      id: "Get Started",
-      label: "Get Started",
-      dropdown: true,
+    },
+    {
+      id: "Join as Keeper",
+      path: "https://triggerx.gitbook.io/triggerx-docs/getting-started-as-keepers",
+      label: "Join as Keeper",
+      target: "_blank",
+      external: true,
     },
     { id: "Blog", path: "/blog", label: "Blog" },
-    {
-      id: "Contact Us",
-      label: "Contact Us",
-      external: false,
-    },
   ];
 
   // Checks if a route is active (for nav highlight)
@@ -459,8 +464,17 @@ const Header = () => {
                 </div>
               </nav>
 
-              {/* Empty div on the right to maintain balance */}
-              <div className="flex-shrink-0 w-60 pointer-events-none invisible"></div>
+              {/* Desktop CTA on the right */}
+              <div className="flex-shrink-0 w-60 flex items-center justify-end">
+                <AnimatedButton
+                  href="https://app.triggerx.network/"
+                  variant="yellow_outline"
+                  flairColor="#fff837"
+                  size="sm"
+                >
+                  Start Building
+                </AnimatedButton>
+              </div>
 
               {/* {animationCompleted && (
                 <div className="absolute right-10">
