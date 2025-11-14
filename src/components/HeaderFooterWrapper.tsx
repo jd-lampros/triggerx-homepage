@@ -6,11 +6,11 @@ import Header from "./Header";
 
 export default function HeaderFooterWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isStudioPage = pathname.startsWith("/studio"); // Hide on /studio and subroutes
+  const isStudioPage = pathname.includes("/studio"); // Hide on /studio and subroutes
 
   return (
     <div className="overflow-x-hidden relative">
-      <Header />
+      {!isStudioPage && <Header />}
       <main className="relative z-30">{children}</main>
       {!isStudioPage &&
         <Footer />}

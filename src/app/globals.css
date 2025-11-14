@@ -30,35 +30,6 @@ body.animationCompleted .loader-wrap {
   display: none !important;
 }
 
-/* Optimize font loading */
-@font-face {
-  font-family: "SharpGrotesk-Light25";
-  src: url("/fonts/SharpGrotesk-Light25.otf") format("opentype");
-  font-display: swap;
-  font-weight: 300;
-}
-
-@font-face {
-  font-family: "SharpGrotesk-Medium25";
-  src: url("/fonts/SharpGrotesk-Medium25.otf") format("opentype");
-  font-display: swap;
-  font-weight: 500;
-}
-
-@font-face {
-  font-family: "Actay-Regular";
-  src: url("/fonts/Actay-Regular.otf") format("opentype");
-  font-display: swap;
-  font-weight: 400;
-}
-
-@font-face {
-  font-family: "ActayWide-Bold";
-  src: url("/fonts/ActayWide-Bold.otf") format("opentype");
-  font-display: swap;
-  font-weight: 700;
-}
-
 :root {
   --background: #090909;
   --foreground: #ededed;
@@ -66,13 +37,6 @@ body.animationCompleted .loader-wrap {
   --grid-line: rgba(35, 35, 35, 0.5);
   --grid-thickness: 1px;
   --grid-bg: #090909;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #000000;
-    --foreground: #ededed;
-  }
 }
 
 * {

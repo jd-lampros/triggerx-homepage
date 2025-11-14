@@ -9,7 +9,6 @@ import dynamic from "next/dynamic";
 // Lazy-load heavy Three.js background
 const GridBackground = dynamic(() => import("@/components/GridBackground"), { ssr: false, loading: () => null });
 import Preloader from "@/components/Preloader";
-import PreloaderFallback from "@/components/PreloaderFallback";
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { shouldShowPreloader, recordVisit } from "@/lib/visitTracker";
 import { initResizeHandler, destroyResizeHandler } from "@/lib/resizeHandler";
@@ -145,10 +144,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://cdn.sanity.io" />
       </head>
       <body suppressHydrationWarning>
-        {/* {showPreloader && (useFallbackPreloader ?
-          <PreloaderFallback onComplete={handlePreloaderComplete} /> :
-          
-        )} */}
+
         <Preloader onComplete={handlePreloaderComplete} />
         {shouldLoadGrid ? <GridBackground /> : null}
         <div id="smooth-wrapper">
@@ -158,7 +154,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </HeaderFooterWrapper>
           </div>
         </div>
-        {/* Defer GTM until after LCP */}
+
         <script
           dangerouslySetInnerHTML={{
             __html: `

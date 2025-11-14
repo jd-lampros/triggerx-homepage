@@ -78,7 +78,7 @@ export default function ClientSlug({ blog }: ClientSlugProps) {
       {/* <Header /> */}
       <main className="w-[95%] max-w-[2100px] mx-auto my-4 lg:my-20 xl:my-40 relative z-40">
         <article>
-          <header className="mb-3 lg:mb-12 sm:mt-20 lg:mt-32">
+          <header className="mb-3 lg:mb-12 mt-32 lg:mt-[15rem] xl:mt-[20rem]">
             {blog.ogImage?.asset?.url ? (
               <div className="rounded-2xl border overflow-hidden">
                 <Image
