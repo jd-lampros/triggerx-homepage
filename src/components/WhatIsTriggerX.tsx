@@ -453,7 +453,7 @@ function WhatIsTriggerX() {
                 }
               }}>
                 <AnimatedButton
-                  href="https://app.triggerx.network/"
+                  href="https://t.me/triggerxnetwork"
                   variant="white_outline"
                   flairColor="white"
                   className="w-50  md:px-6 md:py-3 md:text-lg px-5 py-2.5 text-base"
@@ -469,7 +469,7 @@ function WhatIsTriggerX() {
           <div className="relative h-[32rem] sm:h-[36rem] lg:h-[36rem] xl:h-[38rem] 2xl:h-[42rem] flex items-center justify-center overflow-hidden">
             <div
               ref={containerRef}
-              className="relative w-full h-full flex justify-start lg:justify-center items-end lg:items-end cursor-grab active:cursor-grabbing"
+              className="relative w-full h-full flex justify-start lg:justify-center items-end lg:items-end"
             >
               {cardData.map((card: CardData, index: number) => (
                 <div

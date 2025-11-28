@@ -3,7 +3,7 @@ import React from "react";
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import logo from "../app/assets/logo.svg";
-import crystal from "../app/assets/crystal_hero-2.png";
+import crystal from "../app/assets/crystal_hero-2.svg";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -310,24 +310,24 @@ const Header = () => {
         className={`w-full z-[9999] bg-transparent hidden lg:block top-0 left-0 absolute ${!animationCompleted ? "opacity-0" : ""}`}
       >
 
-        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 2xl:w-[30vw] lg:w-[32vw] md:w-[30vw] w-[35vw] h-full">
-          <div className="relative w-full h-full 2xl:translate-y-[-180%] lg:translate-y-[-152%] translate-y-[-130%]">
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 lg:w-[500px] h-full">
+          <div className="relative w-full h-full translate-y-[-20px]">
             <Image
               src={crystal}
               alt="Crystal Image"
               priority
               quality={80}
-              sizes="(max-width: 768px) 35vw, (max-width: 1024px) 30vw, (max-width: 1536px) 32vw, 30vw"
+              // sizes="(max-width: 768px) 35vw, (max-width: 1024px) 30vw, (max-width: 1536px) 32vw, 30vw"
             />
           </div>
         </div>
 
 
-        <div className="w-full h-[150px] flex justify-center items-center" ref={headerRef}>
+        <div className="w-full my-8 flex justify-center items-center" ref={headerRef}>
           <div className="w-[90%] mx-auto bg-transparent ">
             <div className="w-full flex items-center justify-between header z-100">
               {/* Logo */}
-              <div className="flex-shrink-0 w-60">
+              <div className="flex-shrink-0 w-[130px] xl:w-[160px]">
                 <div
                   ref={logoRef}
                   onClick={handleLogoClick}
@@ -339,7 +339,7 @@ const Header = () => {
                       alt="TriggerX Logo"
                       priority
                       quality={90}
-                      sizes="(max-width: 768px) 35vw, (max-width: 1024px) 30vw, (max-width: 1536px) 32vw, 30vw"
+                      // sizes="(max-width: 768px) 35vw, (max-width: 1024px) 30vw, (max-width: 1536px) 32vw, 30vw"
                     />
                   </Link>
                 </div>
@@ -370,7 +370,7 @@ const Header = () => {
                         <button
                           onClick={() => toggleDropdown(item)}
                           onMouseEnter={handleMouseEnter}
-                          className={`text-nowrap font-actayRegular text-center text-sm xl:text-base px-4 xl:px-6 py-4 rounded-2xl text-white relative z-10 cursor-pointer flex items-center gap-1 ${item.path && isActiveRoute(item.path)
+                          className={`text-nowrap font-actayRegular text-center text-sm xl:text-base px-4 xl:px-6 py-3 rounded-2xl text-white relative z-10 cursor-pointer flex items-center gap-1 ${item.path && isActiveRoute(item.path)
                             ? "bg-gradient-to-r from-[#D9D9D924] to-[#14131324] rounded-2xl border border-[#4B4A4A]"
                             : "transparent"
                             }`}
@@ -397,7 +397,7 @@ const Header = () => {
                           target="_blank"
                           rel="noopener noreferrer"
                           onMouseEnter={handleMouseEnter}
-                          className="text-nowrap font-actayRegular text-center text-sm xl:text-base px-4 xl:px-6 py-4 rounded-2xl text-white relative z-10 cursor-pointer flex items-center gap-1"
+                          className="text-nowrap font-actayRegular text-center lg:text-[11px] xl:text-[14px] px-4 xl:px-6 py-3 rounded-2xl text-white relative z-10 cursor-pointer flex items-center gap-1"
                         >
                           {item.label}
                         </Link>
@@ -405,7 +405,7 @@ const Header = () => {
                         <button
                           onClick={handleClick}
                           onMouseEnter={handleMouseEnter}
-                          className="text-nowrap font-actayRegular text-center text-sm xl:text-base px-4 xl:px-6 py-4 rounded-2xl text-white relative z-10 cursor-pointer flex items-center gap-1"
+                          className="text-nowrap font-actayRegular text-center lg:text-[11px] xl:text-[14px] px-4 xl:px-6 py-3 rounded-2xl text-white relative z-10 cursor-pointer flex items-center gap-1"
                         >
                           {item.label}
                         </button>
@@ -420,7 +420,7 @@ const Header = () => {
                               item.dropdown ?? false
                             )
                           }
-                          className="text-nowrap font-actayRegular text-center text-sm xl:text-base px-4 xl:px-6 py-4 rounded-2xl text-white relative z-10 cursor-pointer flex items-center gap-1"
+                          className="text-nowrap font-actayRegular text-center text-sm xl:text-base px-4 xl:px-6 py-3 rounded-2xl text-white relative z-10 cursor-pointer flex items-center gap-1"
                         >
                           {item.label}
                         </Link>
@@ -503,12 +503,12 @@ const Header = () => {
           className="absolute top-0 left-0 right-0 w-full z-50"
         >
           <div className="w-full">
-            <div className="w-[100%] sm:px-10 px-2 flex justify-between gap-3 items-center py-10 lg:hidden">
+            <div className="w-[100%] sm:px-10 px-2 my-6 md:my-8 flex justify-between gap-3 items-center lg:hidden">
               <div className="w-full relative flex items-center justify-start">
                 <Image
                   src={logo}
                   alt="TriggerX Logo"
-                  className="w-[70vw] md:w-60"
+                  className="w-[170px] h-auto"
                   width={100}
                   height={100}
                 />
@@ -562,7 +562,7 @@ const Header = () => {
                                     item.dropdown ?? false
                                   );
                                 }}
-                                className={`font-actayRegular text-lg px-8 py-4 rounded-2xl relative z-10 cursor-pointer flex items-center justify-center gap-2 hover:bg-[#282828] w-full ${item.path && isActiveRoute(item.path)
+                                className={`font-actayRegular text-lg px-8 py-3 rounded-2xl relative z-10 cursor-pointer flex items-center justify-center gap-2 hover:bg-[#282828] w-full ${item.path && isActiveRoute(item.path)
                                   ? "text-white"
                                   : "text-gray-400"
                                   }`}
@@ -591,7 +591,7 @@ const Header = () => {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 onClick={() => setMenuOpen(false)}
-                                className="font-actayRegular text-lg px-8 py-4 rounded-2xl relative z-10 cursor-pointer flex items-center justify-center gap-2 hover:bg-[#282828] w-full"
+                                className="font-actayRegular text-lg px-8 py-3 rounded-2xl relative z-10 cursor-pointer flex items-center justify-center gap-2 hover:bg-[#282828] w-full"
                               >
                                 {item.label}
                               </a>
@@ -601,7 +601,7 @@ const Header = () => {
                                   handleClick();
                                   setMenuOpen(false);
                                 }}
-                                className={`text-nowrap font-actayRegular text-center text-lg px-8 py-4 rounded-2xl text-white relative z-10 cursor-pointer flex items-center justify-center gap-2 w-full ${item.path && isActiveRoute(item.path)
+                                className={`text-nowrap font-actayRegular text-center text-lg px-8 py-3 rounded-2xl text-white relative z-10 cursor-pointer flex items-center justify-center gap-2 w-full ${item.path && isActiveRoute(item.path)
                                   ? "text-white"
                                   : "text-gray-400"
                                   }`}
@@ -615,7 +615,7 @@ const Header = () => {
                                 onClick={() => {
                                   setMenuOpen(false);
                                 }}
-                                className={`text-nowrap font-actayRegular text-center text-lg px-8 py-4 rounded-2xl text-white relative z-10 cursor-pointer flex items-center justify-center gap-2 ${item.path && isActiveRoute(item.path)
+                                className={`text-nowrap font-actayRegular text-center text-lg px-8 py-3 rounded-2xl text-white relative z-10 cursor-pointer flex items-center justify-center gap-2 ${item.path && isActiveRoute(item.path)
                                   ? "text-white"
                                   : "text-gray-400"
                                   }`}
@@ -628,7 +628,7 @@ const Header = () => {
                                 ref={dropdownRef}
                                 className="bg-[#181818F0] mt-4 text-sm rounded-2xl shadow-lg border border-[#4b4a4a] w-full"
                               >
-                                <div className="py-4 px-6 flex flex-col gap-2">
+                                <div className="py-3 px-6 flex flex-col gap-2">
                                   <a
                                     href="https://app.triggerx.network/devhub"
                                     target="_blank"

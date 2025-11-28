@@ -181,7 +181,7 @@ function HeroSection() {
                 </button>
               </Link> */}
               <AnimatedButton
-                href="https://app.triggerx.network/"
+                href="https://t.me/triggerxnetwork"
                 variant="white_outline"
                 flairColor="white"
                 className="w-50  md:px-6 md:py-3 md:text-lg px-5 py-2.5 text-base"

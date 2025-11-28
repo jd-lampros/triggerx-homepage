@@ -12,7 +12,8 @@ interface AnimatedButtonProps {
     size?: "sm" | "md" | "lg";
     flairColor?: "white" | "black" | string;
     ref?: React.RefObject<HTMLAnchorElement | HTMLButtonElement>;
-
+    disabled?: boolean;
+    title?: string;
 }
 
 export default function AnimatedButton({
@@ -24,11 +25,13 @@ export default function AnimatedButton({
     size = "md",
     flairColor = "white",
     ref,
+    disabled = false,
+    title,
 }: AnimatedButtonProps) {
     const buttonRef = useRef<HTMLAnchorElement | HTMLButtonElement>(null);
 
     useEffect(() => {
-        if (!buttonRef.current) return;
+        if (!buttonRef.current || disabled) return;
 
         const buttonElement = buttonRef.current;
 
@@ -236,7 +239,8 @@ export default function AnimatedButton({
 
     const baseStyles =
         "w-50 inline-flex items-center justify-center gap-1 rounded-full border transition-all duration-300 ease-out";
-    const combinedStyles = `${baseStyles} ${getVariantStyles()} ${getSizeStyles()} ${className}`;
+    const disabledStyles = disabled ? "opacity-50 cursor-not-allowed" : "";
+    const combinedStyles = `${baseStyles} ${getVariantStyles()} ${getSizeStyles()} ${disabledStyles} ${className}`;
 
     if (href) {
         const isHashLink = typeof href === "string" && href.startsWith("#");
@@ -251,6 +255,10 @@ export default function AnimatedButton({
                 target={isExternalLink ? "_blank" : undefined}
                 rel={isExternalLink ? "noopener noreferrer" : undefined}
                 onClick={(e) => {
+                    if (disabled) {
+                        e.preventDefault();
+                        return;
+                    }
                     if (isHashLink && typeof href === "string") {
                         e.preventDefault();
                         const targetElement = document.querySelector(href);
@@ -269,6 +277,7 @@ export default function AnimatedButton({
                     if (onClick) onClick();
                 }}
                 className={combinedStyles}
+                title={title}
             >
                 <span>{children}</span>
             </Link>
@@ -280,6 +289,8 @@ export default function AnimatedButton({
             ref={buttonRef as React.RefObject<HTMLButtonElement>}
             onClick={onClick}
             className={combinedStyles}
+            disabled={disabled}
+            title={title}
         >
             <span>{children}</span>
         </button>

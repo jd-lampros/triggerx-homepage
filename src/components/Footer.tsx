@@ -141,6 +141,7 @@ const footerNavLinksTop = [
     href: "/#",
     isLink: true,
     title: "Available Soon",
+    disabled: true,
   },
   {
     id: "privacyPolicy",
@@ -148,6 +149,7 @@ const footerNavLinksTop = [
     href: "/#",
     isLink: true,
     title: "Available Soon",
+    disabled: true,
   },
 ];
 
@@ -202,6 +204,8 @@ function Footer() {
                   size="sm"
                   flairColor="white"
                   className="px-6 py-3 my-4 md:my-0 font-actayRegular"
+                  disabled={(item as { disabled?: boolean }).disabled}
+                  title={item.title}
                 >
                   {item.label}
                 </AnimatedButton>
